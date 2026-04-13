@@ -151,6 +151,10 @@ type SecretStoreProvider struct {
 	// +optional
 	Previder *PreviderProvider `json:"previder,omitempty"`
 
+	// DM configures this store to sync certificates using Domain Manager provider.
+	// +optional
+	DM *DMProvider `json:"dm,omitempty"`
+
 	// Onboardbase configures this store to sync secrets using the Onboardbase provider
 	// +optional
 	Onboardbase *OnboardbaseProvider `json:"onboardbase,omitempty"`
