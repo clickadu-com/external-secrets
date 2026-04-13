@@ -2,6 +2,7 @@ git.adsrv.wtf/clickadu/bikini v1.0.5 h1:EmI4hE2xYbrYBP41rEl3aA896Q/VELkJA5iV1jc7
 git.adsrv.wtf/clickadu/bikini v1.0.5/go.mod h1:WY7m/yAul5bZmt1vB0CZ3h0Gv9+fHlahnxpDf8uMovg=
 git.adsrv.wtf/clickadu/cloudflare-go v0.106.1-0.20250129141752-9b0a92c0319a h1:S+uWtKaXfOBAUbbTN/FxW7tjvcwpqu/pVn1EJFOavUI=
 git.adsrv.wtf/clickadu/cloudflare-go v0.106.1-0.20250129141752-9b0a92c0319a/go.mod h1:pfUQ4PIG4ISI0/Mmc21Bp86UnFU0ktmPf3iTgbSL+cM=
+git.adsrv.wtf/clickadu/domain-manager v0.4.12 h1:I8rbIWtHeHzA7fphg5C07dxALFhNde+RrjnoP6Ubot4=
 git.adsrv.wtf/clickadu/domain-manager v0.4.12/go.mod h1:qK0RYuqIXwAHKvZOPo7QgPjwHgZZS68hobRJ6nLEY/U=
 github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
 github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
