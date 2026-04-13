@@ -74,7 +74,6 @@ func (c *apiClientWrapper) GetSecret(ctx context.Context, ref esv1.ExternalSecre
 		if strings.HasPrefix(ref.Key, "domain/") {
 			return data["name"], nil
 		}
-		// Для сертификатов возвращаем стандартную пару (fullchain + key)
 		bundle := map[string]string{
 			"tls.crt": string(data["tls.crt"]),
 			"tls.key": string(data["tls.key"]),
@@ -82,7 +81,6 @@ func (c *apiClientWrapper) GetSecret(ctx context.Context, ref esv1.ExternalSecre
 		return json.Marshal(bundle)
 	}
 
-	// Обработка алиаса ca.crt
 	if property == "ca.crt" {
 		property = "ca"
 	}
@@ -163,7 +161,6 @@ func (c *apiClientWrapper) ensureCertificate(ctx context.Context, keyType models
 		domains := []string{value}
 
 		if filter == "domain_id" {
-			// Нужно найти имя домена по ID для создания
 			domainList, err := c.client.DomainList(ctx)
 			if err != nil {
 				return nil, err
@@ -295,31 +292,15 @@ func parseKey(key string) (prefix, filter, value string, err error) {
 }
 
 func (c *apiClientWrapper) PushSecret(ctx context.Context, secret *corev1.Secret, data esv1.PushSecretData) error {
-	secretKey := data.GetSecretKey()
-	if secretKey == "" {
-		return errors.New("missing push secret key")
-	}
-
-	val, ok := secret.Data[secretKey]
-	if !ok {
-		return fmt.Errorf("secret key %s not found", secretKey)
-	}
-
-	var req certHandler.CreateUploadReq
-	if err := json.Unmarshal(val, &req); err != nil {
-		return fmt.Errorf("failed to unmarshal push secret data as CreateUploadReq: %w", err)
-	}
-
-	_, err := c.client.CertificateUpload(ctx, &req)
-	return err
+	return errors.New("push secret is not supported by dm provider")
 }
 
 func (c *apiClientWrapper) DeleteSecret(ctx context.Context, ref esv1.PushSecretRemoteRef) error {
-	return errors.New("not implemented")
+	return errors.New("delete secret is not supported by dm provider")
 }
 
 func (c *apiClientWrapper) SecretExists(ctx context.Context, ref esv1.PushSecretRemoteRef) (bool, error) {
-	return false, errors.New("not implemented")
+	return false, errors.New("push is not supported")
 }
 
 func (c *apiClientWrapper) Validate() (esv1.ValidationResult, error) {
@@ -327,7 +308,7 @@ func (c *apiClientWrapper) Validate() (esv1.ValidationResult, error) {
 }
 
 func (c *apiClientWrapper) GetAllSecrets(ctx context.Context, ref esv1.ExternalSecretFind) (map[string][]byte, error) {
-	return nil, errors.New("not implemented")
+	return nil, errors.New("get all secrets is not supported")
 }
 
 func (c *apiClientWrapper) Close(ctx context.Context) error {

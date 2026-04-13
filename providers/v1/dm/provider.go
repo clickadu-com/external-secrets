@@ -66,7 +66,7 @@ func (p *Provider) ValidateStore(store esv1.GenericStore) (admission.Warnings, e
 
 // Capabilities returns provider capabilities.
 func (p *Provider) Capabilities() esv1.SecretStoreCapabilities {
-	return esv1.SecretStoreReadWrite
+	return esv1.SecretStoreReadOnly
 }
 
 // NewProvider creates a new provider.
