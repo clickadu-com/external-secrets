@@ -3824,6 +3824,53 @@ spec:
                         - clientSecret
                         - tenant
                       type: object
+                    dm:
+                      description: DM configures this store to sync certificates using Domain Manager provider.
+                      properties:
+                        auth:
+                          description: DMAuth contains a secretRef for credentials.
+                          properties:
+                            secretRef:
+                              description: DMAuthSecretRef holds secret references for Domain Manager API credentials.
+                              properties:
+                                apiToken:
+                                  description: APIToken is used as a Bearer token for API authentication.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - apiToken
+                              type: object
+                          type: object
+                        baseURL:
+                          description: BaseURL is the Domain Manager API base URL.
+                          minLength: 1
+                          type: string
+                      required:
+                        - auth
+                        - baseURL
+                      type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider
                       properties:
@@ -9725,6 +9772,53 @@ spec:
                       required:
                         - auth
                         - host
+                      type: object
+                    dm:
+                      description: DM configures this store to sync certificates using Domain Manager provider.
+                      properties:
+                        auth:
+                          description: DMAuth contains a secretRef for credentials.
+                          properties:
+                            secretRef:
+                              description: DMAuthSecretRef holds secret references for Domain Manager API credentials.
+                              properties:
+                                apiToken:
+                                  description: APIToken is used as a Bearer token for API authentication.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - apiToken
+                              type: object
+                          type: object
+                        baseURL:
+                          description: BaseURL is the Domain Manager API base URL.
+                          minLength: 1
+                          type: string
+                      required:
+                        - auth
+                        - baseURL
                       type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider
@@ -15928,6 +16022,53 @@ spec:
                         - clientSecret
                         - tenant
                       type: object
+                    dm:
+                      description: DM configures this store to sync certificates using Domain Manager provider.
+                      properties:
+                        auth:
+                          description: DMAuth contains a secretRef for credentials.
+                          properties:
+                            secretRef:
+                              description: DMAuthSecretRef holds secret references for Domain Manager API credentials.
+                              properties:
+                                apiToken:
+                                  description: APIToken is used as a Bearer token for API authentication.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - apiToken
+                              type: object
+                          type: object
+                        baseURL:
+                          description: BaseURL is the Domain Manager API base URL.
+                          minLength: 1
+                          type: string
+                      required:
+                        - auth
+                        - baseURL
+                      type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider
                       properties:
@@ -21829,6 +21970,53 @@ spec:
                       required:
                         - auth
                         - host
+                      type: object
+                    dm:
+                      description: DM configures this store to sync certificates using Domain Manager provider.
+                      properties:
+                        auth:
+                          description: DMAuth contains a secretRef for credentials.
+                          properties:
+                            secretRef:
+                              description: DMAuthSecretRef holds secret references for Domain Manager API credentials.
+                              properties:
+                                apiToken:
+                                  description: APIToken is used as a Bearer token for API authentication.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - apiToken
+                              type: object
+                          type: object
+                        baseURL:
+                          description: BaseURL is the Domain Manager API base URL.
+                          minLength: 1
+                          type: string
+                      required:
+                        - auth
+                        - baseURL
                       type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider
