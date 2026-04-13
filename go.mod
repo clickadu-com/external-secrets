@@ -3,7 +3,6 @@ module github.com/external-secrets/external-secrets
 go 1.26.2
 
 replace (
-	git.adsrv.wtf/clickadu/domain-manager => ../domain-manager
 	github.com/external-secrets/external-secrets/apis => ./apis
 	github.com/external-secrets/external-secrets/generators/v1/acr => ./generators/v1/acr
 	github.com/external-secrets/external-secrets/generators/v1/cloudsmith => ./generators/v1/cloudsmith
@@ -66,6 +65,7 @@ replace (
 require (
 	cloud.google.com/go/iam v1.5.3 // indirect
 	cloud.google.com/go/secretmanager v1.16.0 // indirect
+	git.adsrv.wtf/clickadu/domain-manager v0.4.12 // indirect
 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest v0.11.30 // indirect
 	github.com/Azure/go-autorest/autorest/adal v0.9.24 // indirect
@@ -187,7 +187,6 @@ require (
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
 	dario.cat/mergo v1.0.2 // indirect
 	git.adsrv.wtf/clickadu/bikini v1.0.40 // indirect
-	git.adsrv.wtf/clickadu/domain-manager v0.0.0 // indirect
 	git.adsrv.wtf/clickadu/go-generics-tools v1.3.3 // indirect
 	git.adsrv.wtf/clickadu/prometheus_golang_client v1.101.0 // indirect
 	github.com/1password/onepassword-sdk-go v0.3.1 // indirect
