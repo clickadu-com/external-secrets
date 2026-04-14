@@ -17,7 +17,7 @@ all: $(addprefix build-,$(ARCH))
 
 # Image registry for build/push image targets
 export IMAGE_REGISTRY ?= nexus.adsrv.wtf
-export IMAGE_REPO     ?= apps/exteranal-secrets
+export IMAGE_REPO     ?= apps/external-secrets
 export IMAGE_NAME ?= $(IMAGE_REGISTRY)/$(IMAGE_REPO)
 
 BUNDLE_DIR     ?= deploy/crds

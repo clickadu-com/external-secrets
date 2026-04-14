@@ -1,13 +1,13 @@
 image:
-  repository: nexus.adsrv.wtf/apps/exteranal-secrets
+  repository: nexus.adsrv.wtf/apps/external-secrets
   tag: main
 
 webhook:
   image:
-    repository: nexus.adsrv.wtf/apps/exteranal-secrets
+    repository: nexus.adsrv.wtf/apps/external-secrets
     tag: main
 
 certController:
   image:
-    repository: nexus.adsrv.wtf/apps/exteranal-secrets
+    repository: nexus.adsrv.wtf/apps/external-secrets
     tag: main
