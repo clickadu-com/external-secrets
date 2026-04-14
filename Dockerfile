@@ -1,14 +1,28 @@
-FROM gcr.io/distroless/static@sha256:47b2d72ff90843eb8a768b5c2f89b40741843b639d065b9b937b07cd59b479c6
+# Build stage
+FROM nexus.adsrv.wtf/base/golang:1.26.2-202604141903 AS builder
 
-# Add metadata
-LABEL maintainer="cncf-externalsecretsop-maintainers@lists.cncf.io" \
-      description="External Secrets Operator is a Kubernetes operator that integrates external secret management systems"
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+ARG GOPRIVATE
 
-ARG TARGETOS
-ARG TARGETARCH
-COPY bin/external-secrets-${TARGETOS}-${TARGETARCH} /bin/external-secrets
+ENV CGO_ENABLED=0 \
+    GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH} \
+    GOPRIVATE=${GOPRIVATE}
 
-# Run as UID for nobody
+WORKDIR /app
+
+# Просто копируем все исходники (включая все go.mod во всех подпапках)
+COPY . /app/
+
+# Используем cache mount для кеша модулей и билда
+# Это даст НАМНОГО больше прироста скорости, чем игры со слоями
+RUN --mount=type=cache,target=${GOPATH},mode=0777,uid=10000,gid=10000 \
+    go build -o bin/external-secrets main.go
+
+# Final stage
+FROM gcr.io/distroless/static@sha256:47b2d72ff90843eb8a768b5c2f89b40741843b639d065b9b937b07cd59b479c6 AS app
+COPY --from=builder /app/bin/external-secrets /bin/external-secrets
+
 USER 65534
-
 ENTRYPOINT ["/bin/external-secrets"]
