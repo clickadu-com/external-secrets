@@ -59,6 +59,8 @@ dario.cat/mergo v1.0.2/go.mod h1:E/hbnu0NxMFBjpMIE34DRGLWqDy0g5FuKDhCb31ngxA=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 git.adsrv.wtf/clickadu/bikini v1.0.40 h1:6i1e5lepordb4O8DHVZm4L3j+xcpf/Iv1LR9tIlT5tI=
 git.adsrv.wtf/clickadu/bikini v1.0.40/go.mod h1:HbXKVJcdzj+fBbzAuQzfZN7c92tX/sw1u0dk4SGfABM=
+git.adsrv.wtf/clickadu/cloudflare-go v0.106.1-0.20250129141752-9b0a92c0319a h1:S+uWtKaXfOBAUbbTN/FxW7tjvcwpqu/pVn1EJFOavUI=
+git.adsrv.wtf/clickadu/cloudflare-go v0.106.1-0.20250129141752-9b0a92c0319a/go.mod h1:pfUQ4PIG4ISI0/Mmc21Bp86UnFU0ktmPf3iTgbSL+cM=
 git.adsrv.wtf/clickadu/domain-manager v0.4.12 h1:I8rbIWtHeHzA7fphg5C07dxALFhNde+RrjnoP6Ubot4=
 git.adsrv.wtf/clickadu/domain-manager v0.4.12/go.mod h1:qK0RYuqIXwAHKvZOPo7QgPjwHgZZS68hobRJ6nLEY/U=
 git.adsrv.wtf/clickadu/go-generics-tools v1.3.3 h1:kTPeRv6xHswOXP6n8VkNTVaSDuApvJDfSpcu0Kq79Zo=
@@ -311,8 +313,6 @@ github.com/clipperhouse/uax29/v2 v2.3.0 h1:SNdx9DVUqMoBuBoW3iLOj4FQv3dN5mDtuqwuh
 github.com/clipperhouse/uax29/v2 v2.3.0/go.mod h1:Wn1g7MK6OoeDT0vL+Q0SQLDz/KpfsVRgg6W7ihQeh4g=
 github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
 github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
-github.com/cloudflare/cloudflare-go v0.106.0 h1:q41gC5Wc1nfi0D1ZhSHokWcd9mGMbqC7RE7qiP+qE00=
-github.com/cloudflare/cloudflare-go v0.106.0/go.mod h1:pfUQ4PIG4ISI0/Mmc21Bp86UnFU0ktmPf3iTgbSL+cM=
 github.com/cloudru-tech/iam-sdk v1.0.4 h1:qnGMhft3FnknCj6F+vTSbwznqJDDCAG6hWRe6IcCyVM=
 github.com/cloudru-tech/iam-sdk v1.0.4/go.mod h1:V7O/EJJrIAHk1WEXclh7A/p0yQiaFIoPeIfJoc0O61w=
 github.com/cloudru-tech/secret-manager-sdk v1.1.1 h1:ykgp0pz37WEYE4KyrSIt1SCwkY2vs5ItyFGd2Tn5tf0=

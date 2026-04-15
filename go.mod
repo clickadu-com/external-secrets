@@ -504,3 +504,5 @@ require (
 	k8s.io/klog/v2 v2.140.0
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 )
+
+replace github.com/cloudflare/cloudflare-go => git.adsrv.wtf/clickadu/cloudflare-go v0.106.1-0.20250129141752-9b0a92c0319a

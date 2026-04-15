@@ -15,7 +15,7 @@
 Для работы нужен API токен, сохраненный в секрете Kubernetes.
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ClusterSecretStore
 metadata:
   name: domain-manager
@@ -39,7 +39,7 @@ spec:
 Используется для получения конкретных полей в заданные ключи.
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: dm-targeted
@@ -85,7 +85,7 @@ spec:
 Используется для создания готовых TLS секретов и массовой загрузки.
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: dm-automated

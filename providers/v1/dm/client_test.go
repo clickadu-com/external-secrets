@@ -23,8 +23,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	esv1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetSecret_Certificate_DomainID_Provisioning(t *testing.T) {
@@ -115,4 +115,38 @@ func TestGetSecret_Certificate_Aliases(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "PUB\nCA", string(val))
+
+	// Проверяем ca.crt (новый алиас)
+	val, err = client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
+		Key:      "rsa/domain/test.com",
+		Property: "ca.crt",
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, "CA", string(val))
+}
+
+func TestGetSecret_Domain_TypeID(t *testing.T) {
+	mux := http.NewServeMux()
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	client := newClient(server.URL, "test-token")
+
+	mux.HandleFunc("/api/v1/domain/list", func(w http.ResponseWriter, r *http.Request) {
+		domains := []map[string]any{
+			{"id": 1, "name": "a.com", "typeID": 42, "status": 40},
+			{"id": 2, "name": "b.com", "typeID": 42, "status": 40},
+			{"id": 3, "name": "c.com", "typeID": 1, "status": 40},
+		}
+		json.NewEncoder(w).Encode(domains)
+	})
+
+	ctx := context.Background()
+
+	// Тест: запрос списка доменов по type_id
+	val, err := client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
+		Key: "domain/type_id/42",
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, "a.com,b.com", string(val))
 }

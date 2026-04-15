@@ -54,10 +54,6 @@ func newClient(baseURL, token string) *apiClientWrapper {
 }
 
 func (c *apiClientWrapper) GetSecret(ctx context.Context, ref esv1.ExternalSecretDataRemoteRef) ([]byte, error) {
-	if strings.Contains(ref.Key, "type_id/") {
-		return nil, errors.New("type_id/ filter is only supported in dataFrom (mass loading)")
-	}
-
 	subdomains := ""
 	property := ref.Property
 	if property != "" && !reservedProperties[property] {
@@ -71,8 +67,11 @@ func (c *apiClientWrapper) GetSecret(ctx context.Context, ref esv1.ExternalSecre
 	}
 
 	if property == "" {
-		if strings.HasPrefix(ref.Key, "domain/") {
-			return data["name"], nil
+		if val, ok := data["name"]; ok {
+			return val, nil
+		}
+		if val, ok := data["domains"]; ok {
+			return val, nil
 		}
 		bundle := map[string]string{
 			"tls.crt": string(data["tls.crt"]),
@@ -233,6 +232,7 @@ func (c *apiClientWrapper) ensureCertificate(ctx context.Context, keyType models
 				"cert":    []byte(fullchain),
 				"key":     []byte(cert.PEM.Private),
 				"ca":      []byte(cert.PEM.CA),
+				"ca.crt":  []byte(cert.PEM.CA),
 			}, nil
 		}
 	}
@@ -247,7 +247,10 @@ func (c *apiClientWrapper) getDomainData(ctx context.Context, filter, value stri
 	}
 
 	if filter == "type_id" {
-		typeID, _ := strconv.ParseUint(value, 10, 16)
+		typeID, err := strconv.ParseUint(value, 10, 16)
+		if err != nil {
+			return nil, fmt.Errorf("invalid type_id format: %w", err)
+		}
 		validNames := []string{}
 		for _, d := range domains {
 			if d.TypeID == uint16(typeID) && d.Status >= 40 && d.Status < 58 {
@@ -261,7 +264,10 @@ func (c *apiClientWrapper) getDomainData(ctx context.Context, filter, value stri
 
 	var requestedID uint32
 	if filter == "id" {
-		id, _ := strconv.ParseUint(value, 10, 32)
+		id, err := strconv.ParseUint(value, 10, 32)
+		if err != nil {
+			return nil, fmt.Errorf("invalid id format: %w", err)
+		}
 		requestedID = uint32(id)
 	}
 
