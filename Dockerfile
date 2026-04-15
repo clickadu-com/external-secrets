@@ -1,5 +1,6 @@
 # Build stage
-FROM nexus.adsrv.wtf/base/golang:1.26.2-202604141903 AS builder
+ARG GolangVersion=1.26.2-202604141903
+FROM nexus.adsrv.wtf/base/golang:${GolangVersion} AS builder
 
 ARG TARGETOS=linux
 ARG TARGETARCH=amd64
@@ -12,11 +13,8 @@ ENV CGO_ENABLED=0 \
 
 WORKDIR /app
 
-# Просто копируем все исходники (включая все go.mod во всех подпапках)
 COPY . /app/
 
-# Используем cache mount для кеша модулей и билда
-# Это даст НАМНОГО больше прироста скорости, чем игры со слоями
 RUN --mount=type=cache,target=${GOPATH},mode=0777,uid=10000,gid=10000 \
     go build -o bin/external-secrets main.go
 
