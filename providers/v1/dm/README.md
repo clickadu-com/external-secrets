@@ -1,137 +1,123 @@
 # Провайдер Domain Manager (DM)
 
-Провайдер **Domain Manager (DM)** интегрирует управление SSL-сертификатами и доменами Clickadu в Kubernetes. Он автоматизирует процесс получения сертификатов, объединяя их в Fullchain и заказывая новые сертификаты по требованию.
+Провайдер **Domain Manager (DM)** интегрирует управление SSL-сертификатами Clickadu в Kubernetes через External Secrets Operator.
 
-## Основные возможности
-- **Авто-провижининг**: Автоматический заказ RSA/ECDSA сертификатов. Поддерживается создание по имени домена или по его ID в системе DM.
-- **Поддержка субдоменов (SAN)**: В режиме `dataFrom` можно указать список субдоменов через запятую в поле `property`.
-- **Интеллектуальный Fullchain**: Поля `cert` и `tls.crt` всегда возвращают объединенную цепочку (Certificate + CA).
-- **Списки живых доменов**: Позволяет получить список имен активных доменов (статусы 40-57) через запятую.
+## Настройка Store
 
----
+Для использования провайдера необходимо создать `SecretStore` или `ClusterSecretStore` с указанием URL API и токена доступа.
 
-## Настройка SecretStore
+### Создание Secret с токеном
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dm-token
+type: Opaque
+stringData:
+  token: "ваш_api_токен"
+```
 
-Для работы нужен API токен, сохраненный в секрете Kubernetes.
-
+### SecretStore
 ```yaml
 apiVersion: external-secrets.io/v1
-kind: ClusterSecretStore
+kind: SecretStore
 metadata:
-  name: domain-manager
+  name: dm-store
 spec:
   provider:
     dm:
-      baseURL: "https://dm.example.com"
+      url: "https://dm.clickadu.com" # URL вашего Domain Manager
       auth:
         secretRef:
-          apiToken:
-            name: dm-api-token
+          token:
+            name: dm-token
             key: token
-            namespace: external-secrets
 ```
 
 ---
 
-## Примеры использования
+## Использование в ExternalSecret
 
-### 1. Таргетированные запросы (data)
-Используется для получения конкретных полей в заданные ключи.
+### 1. Режим Чтения (`data`)
+Используется для получения полей **существующих** сертификатов.
 
+**Внимание**: Поле `property` является **обязательным**.
+
+| Поле `property` | Описание |
+|-------|----------|
+| `bundle` | Fullchain (сертификат + CA) |
+| `cert` | Только тело сертификата |
+| `ca` | Только CA (root/intermediate) |
+| `key` | Приватный ключ |
+
+#### Примеры (data):
 ```yaml
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: dm-targeted
+  name: dm-certs
 spec:
-  refreshInterval: "1h"
   secretStoreRef:
-    name: domain-manager
-    kind: ClusterSecretStore
+    name: dm-store
+    kind: SecretStore
   target:
-    name: cert-data
+    name: my-tls-secret
   data:
-    # Получение Fullchain (Cert + CA) по домену
-    - secretKey: fullchain.pem
+    # Получение Fullchain по имени (RSA)
+    - secretKey: tls.crt
       remoteRef:
-        key: rsa/domain/example.com
-        property: cert
+        key: rsa/name/example.com
+        property: bundle
 
-    # Получение только приватного ключа
-    - secretKey: private.key
+    # Получение ключа по имени (RSA)
+    - secretKey: tls.key
       remoteRef:
-        key: rsa/domain/example.com
+        key: rsa/name/example.com
         property: key
 
-    # Получение только CA бандла (алиас ca.crt также работает)
-    - secretKey: root.ca
+    # Получение по ID сертификата (ECDSA)
+    - secretKey: cert-only.pem
       remoteRef:
-        key: rsa/domain/example.com
-        property: ca
-
-    # Получение сертификата по ID сертификата
-    - secretKey: cert-by-id
-      remoteRef:
-        key: rsa/id/123
+        key: ecdsa/id/12345
         property: cert
-
-    # Получение имени домена по ID домена
-    - secretKey: domain-name
-      remoteRef:
-        key: domain/id/42
 ```
 
-### 2. Автоматизация и SAN (dataFrom)
-Используется для создания готовых TLS секретов и массовой загрузки.
+### 2. Режим Авто-выпуска (`dataFrom`)
+Используется для **автоматического создания** сертификатов, если они еще не существуют. Провайдер сам найдет домен и закажет сертификат.
 
+- **key**: `rsa/name/<domain>` или `ecdsa/name/<domain>`
+- **property**: список SAN (субдоменов) через запятую.
+- **Результат**: всегда создает два ключа в K8s Secret: `bundle` и `key`.
+
+#### Примеры (dataFrom):
 ```yaml
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: dm-automated
+  name: dm-auto-tls
 spec:
-  refreshInterval: "1h"
   secretStoreRef:
-    name: domain-manager
-    kind: ClusterSecretStore
+    name: dm-store
+    kind: SecretStore
   target:
-    name: example-tls
+    name: auto-tls-secret
     template:
       type: kubernetes.io/tls
+      data:
+        tls.crt: "{{ .bundle }}"
+        tls.key: "{{ .key }}"
   dataFrom:
-    # Авто-выпуск RSA сертификата для: test.com, www.test.com, api.test.com
-    # В секрете создадутся ключи: tls.crt (fullchain) и tls.key
+    # Если сертификата для my-site.com нет — он будет создан.
+    # Будут добавлены SAN: www.my-site.com и api.my-site.com
     - extract:
-        key: rsa/domain/test.com
-        property: www,api
-
-    # То же самое, но поиск домена по его ID в системе DM
-    - extract:
-        key: rsa/domain_id/42
-        property: www,api
-
-    # Получение списка всех "живых" доменов (40-57) группы 232 через запятую
-    # Создаст ключ 'domains' со значением "a.com,b.com,c.com"
-    - extract:
-        key: domain/type_id/232
+        key: rsa/name/my-site.com
+        property: "www,api"
 ```
 
 ---
 
-## Таблица свойств (Property)
-
-| Свойство | Результат | Комментарий |
-|----------|-----------|-------------|
-| `cert` / `tls.crt` | **Fullchain** | Certificate + CA Bundle |
-| `key` / `tls.key` | Private Key | Тело приватного ключа |
-| `ca` / `ca.crt` | **CA Only** | Только корневой/промежуточный сертификат |
-| *любое другое* | - | Список субдоменов (только для `domain/` и `domain_id/` ключей) |
-
 ## Форматы ключей (Key)
-* `rsa/domain/<host>` — Поиск/создание RSA по имени домена.
-* `ecdsa/domain/<host>` — Поиск/создание ECDSA по имени домена.
-* `rsa/domain_id/<id>` — Поиск/создание RSA по ID домена.
-* `rsa/id/<id>` — Поиск RSA по ID сертификата.
-* `domain/id/<id>` — Имя домена по его ID.
-* `domain/type_id/<id>` — Список доменов группы.
-```
+* `rsa/name/<host>` — Поиск или Создание RSA сертификата.
+* `ecdsa/name/<host>` — Поиск или Создание ECDSA сертификата.
+* `rsa/id/<id>` — Поиск по ID (только чтение).
+* `ecdsa/id/<id>` — Поиск по ID (только чтение).

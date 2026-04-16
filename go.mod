@@ -65,7 +65,7 @@ replace (
 require (
 	cloud.google.com/go/iam v1.5.3 // indirect
 	cloud.google.com/go/secretmanager v1.16.0 // indirect
-	git.adsrv.wtf/clickadu/domain-manager v0.4.12 // indirect
+	git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260416090715-0ea41a0ebed2 // indirect
 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest v0.11.30 // indirect
 	github.com/Azure/go-autorest/autorest/adal v0.9.24 // indirect
@@ -186,7 +186,7 @@ require (
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
 	dario.cat/mergo v1.0.2 // indirect
-	git.adsrv.wtf/clickadu/bikini v1.0.40 // indirect
+	git.adsrv.wtf/clickadu/bikini v1.0.43 // indirect
 	git.adsrv.wtf/clickadu/go-generics-tools v1.3.3 // indirect
 	git.adsrv.wtf/clickadu/prometheus_golang_client v1.101.0 // indirect
 	github.com/1password/onepassword-sdk-go v0.3.1 // indirect
@@ -291,6 +291,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/gofrs/flock v0.13.0 // indirect
+	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
 	github.com/golang/glog v1.2.5 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect

@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetSecret_Certificate_DomainID_Provisioning(t *testing.T) {
+func TestCertificate_Provisioning_Only_In_DataFrom(t *testing.T) {
 	mux := http.NewServeMux()
 	server := httptest.NewServer(mux)
 	defer server.Close()
@@ -39,49 +39,75 @@ func TestGetSecret_Certificate_DomainID_Provisioning(t *testing.T) {
 		json.NewEncoder(w).Encode([]any{})
 	})
 
-	mux.HandleFunc("/api/v1/domain/list", func(w http.ResponseWriter, r *http.Request) {
-		domains := []map[string]any{
-			{"id": 42, "name": "resolved.com", "typeID": 1, "status": 40},
-		}
-		json.NewEncoder(w).Encode(domains)
-	})
-
-	mux.HandleFunc("/api/v1/certificate/create", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v1/certificate/create/new", func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
-			Name    string   `json:"name"`
-			Domains []string `json:"domains"`
+			Domains     []string `json:"domains"`
+			Name        string   `json:"name"`
+			RequestedBy string   `json:"requestedBy"`
 		}
 		json.NewDecoder(r.Body).Decode(&req)
 		provisionedDomains = req.Domains
+		assert.Equal(t, "test.com", req.Name)
+		assert.Equal(t, "ESO", req.RequestedBy)
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(map[string]any{"id": 1, "status": 0})
+		json.NewEncoder(w).Encode(map[string]any{"id": 100, "status": 0})
+	})
+
+	mux.HandleFunc("/api/v1/certificate/get", func(w http.ResponseWriter, r *http.Request) {
+		name := r.URL.Query().Get("name")
+		id := r.URL.Query().Get("id")
+
+		if name == "test.com" && id == "" {
+			// (1) findCertificate for GetSecret (data)
+			// Return empty to simulate NOT FOUND
+			json.NewEncoder(w).Encode([]any{})
+			return
+		}
+
+		if id == "100" {
+			// (3) fetchCertificateEntity after provisioning
+			certs := []map[string]any{
+				{
+					"id":     100,
+					"name":   "test.com",
+					"status": 0,
+					"pem":    map[string]string{},
+				},
+			}
+			json.NewEncoder(w).Encode(certs)
+			return
+		}
+
+		json.NewEncoder(w).Encode([]any{})
 	})
 
 	ctx := context.Background()
 
-	// Тест: запрос по domain_id с субдоменами в property
-	_, err := client.GetSecretMap(ctx, esv1.ExternalSecretDataRemoteRef{
-		Key:      "rsa/domain_id/42",
+	// 1. Попытка через GetSecret (data) -> Должна быть ошибка (создание запрещено)
+	_, err := client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
+		Key:      "rsa/name/test.com",
+		Property: "bundle",
+	})
+	assert.Error(t, err)
+	assert.ErrorIs(t, err, esv1.NoSecretErr)
+
+	// 2. Попытка через GetSecretMap (dataFrom) -> Должно создать с SAN
+	_, err = client.GetSecretMap(ctx, esv1.ExternalSecretDataRemoteRef{
+		Key:      "rsa/name/test.com",
 		Property: "www,api",
 	})
-
-	assert.Error(t, err) // Статус 0, ожидаем "not ready"
-	assert.ElementsMatch(t, []string{"resolved.com", "www.resolved.com", "api.resolved.com"}, provisionedDomains)
+	assert.Error(t, err) // Статус 0 = not ready
+	assert.Contains(t, err.Error(), "certificate is not ready")
+	assert.Contains(t, err.Error(), "status: 0")
+	assert.ElementsMatch(t, []string{"test.com", "www.test.com", "api.test.com"}, provisionedDomains)
 }
 
-func TestGetSecret_Certificate_Aliases(t *testing.T) {
+func TestCertificate_Fetch_Existing_In_Data(t *testing.T) {
 	mux := http.NewServeMux()
 	server := httptest.NewServer(mux)
 	defer server.Close()
 
 	client := newClient(server.URL, "test-token")
-
-	mux.HandleFunc("/api/v1/certificate/list", func(w http.ResponseWriter, r *http.Request) {
-		certs := []map[string]any{
-			{"id": 1, "name": "test.com", "keyType": "RSA", "status": 30},
-		}
-		json.NewEncoder(w).Encode(certs)
-	})
 
 	mux.HandleFunc("/api/v1/certificate/get", func(w http.ResponseWriter, r *http.Request) {
 		certs := []map[string]any{
@@ -93,6 +119,7 @@ func TestGetSecret_Certificate_Aliases(t *testing.T) {
 					"private": "PRIV",
 					"ca":      "CA",
 				},
+				"status": 30,
 			},
 		}
 		json.NewEncoder(w).Encode(certs)
@@ -100,53 +127,27 @@ func TestGetSecret_Certificate_Aliases(t *testing.T) {
 
 	ctx := context.Background()
 
-	// Проверяем ca.crt
+	// 1. Получение конкретного поля (ca)
 	val, err := client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
-		Key:      "rsa/domain/test.com",
-		Property: "ca.crt",
+		Key:      "rsa/name/test.com",
+		Property: "ca",
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "CA", string(val))
 
-	// Проверяем fullchain (tls.crt)
-	val, err = client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
-		Key:      "rsa/domain/test.com",
-		Property: "tls.crt",
+	// 2. Получение без property (ошибка)
+	_, err = client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
+		Key: "rsa/name/test.com",
+	})
+	assert.Error(t, err)
+	assert.Equal(t, "property is required in data mode", err.Error())
+
+	// 3. Получение в режиме dataFrom (GetSecretMap)
+	resMap, err := client.GetSecretMap(ctx, esv1.ExternalSecretDataRemoteRef{
+		Key: "rsa/name/test.com",
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, "PUB\nCA", string(val))
-
-	// Проверяем ca.crt (новый алиас)
-	val, err = client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
-		Key:      "rsa/domain/test.com",
-		Property: "ca.crt",
-	})
-	assert.NoError(t, err)
-	assert.Equal(t, "CA", string(val))
-}
-
-func TestGetSecret_Domain_TypeID(t *testing.T) {
-	mux := http.NewServeMux()
-	server := httptest.NewServer(mux)
-	defer server.Close()
-
-	client := newClient(server.URL, "test-token")
-
-	mux.HandleFunc("/api/v1/domain/list", func(w http.ResponseWriter, r *http.Request) {
-		domains := []map[string]any{
-			{"id": 1, "name": "a.com", "typeID": 42, "status": 40},
-			{"id": 2, "name": "b.com", "typeID": 42, "status": 40},
-			{"id": 3, "name": "c.com", "typeID": 1, "status": 40},
-		}
-		json.NewEncoder(w).Encode(domains)
-	})
-
-	ctx := context.Background()
-
-	// Тест: запрос списка доменов по type_id
-	val, err := client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
-		Key: "domain/type_id/42",
-	})
-	assert.NoError(t, err)
-	assert.Equal(t, "a.com,b.com", string(val))
+	assert.Equal(t, "PUB\nCA", string(resMap["bundle"]))
+	assert.Equal(t, "PRIV", string(resMap["key"]))
+	assert.Len(t, resMap, 2)
 }
