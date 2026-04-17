@@ -109,7 +109,7 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 			Name: value, KeyType: kt, Domains: domains, RequestedBy: ptr("ESO"), Sync: true,
 		})
 
-		if err == nil && createResp.PEM.Public != "" {
+		if err == nil && createResp != nil && createResp.Certificate != nil && createResp.PEM.Public != "" {
 			cert = &certificate.GetEntity{
 				Certificate: createResp.Certificate,
 				PEM:         createResp.PEM,
@@ -120,13 +120,22 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 				return nil, fmt.Errorf("failed to provision certificate: %w", err)
 			}
 
-			// Try to get the newly created cert to verify accessibility and get its status
-			resp, err := c.client.CertificateGet(ctx, req)
+			// If we got here, it means either creation failed with conflict or returned no PEM data.
+			// Try to get the cert again. If we couldn't see it before, we might see it now
+			// or we might have an ID to use.
+			var getReq *certificate.GetReq
+			if createResp != nil && createResp.Certificate != nil && createResp.ID != 0 {
+				getReq = &certificate.GetReq{ID: &createResp.ID}
+			} else {
+				getReq = req
+			}
+
+			resp, err := c.client.CertificateGet(ctx, getReq)
 			if err != nil {
-				return nil, fmt.Errorf("certificate created but retrieval failed: %w", err)
+				return nil, fmt.Errorf("certificate exists but retrieval failed: %w", err)
 			}
 			if len(resp) == 0 {
-				return nil, fmt.Errorf("certificate created but not found in subsequent request")
+				return nil, fmt.Errorf("certificate not found after creation attempt")
 			}
 			cert = resp[0]
 		}

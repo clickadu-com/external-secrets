@@ -3,7 +3,7 @@ module github.com/external-secrets/external-secrets/providers/v1/dm
 go 1.26.2
 
 require (
-	git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260417084557-ebf735348166
+	git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260417101312-536a8599f81a
 	github.com/external-secrets/external-secrets/apis v0.0.0
 	github.com/external-secrets/external-secrets/runtime v0.0.0
 	github.com/stretchr/testify v1.11.1

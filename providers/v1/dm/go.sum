@@ -2,8 +2,8 @@ git.adsrv.wtf/clickadu/bikini v1.0.47 h1:DMR1zwAvn5EgjRh1e+7r3mj3p7/aBThOW0MCA9W
 git.adsrv.wtf/clickadu/bikini v1.0.47/go.mod h1:HbXKVJcdzj+fBbzAuQzfZN7c92tX/sw1u0dk4SGfABM=
 git.adsrv.wtf/clickadu/cloudflare-go v0.106.1-0.20250129141752-9b0a92c0319a h1:S+uWtKaXfOBAUbbTN/FxW7tjvcwpqu/pVn1EJFOavUI=
 git.adsrv.wtf/clickadu/cloudflare-go v0.106.1-0.20250129141752-9b0a92c0319a/go.mod h1:pfUQ4PIG4ISI0/Mmc21Bp86UnFU0ktmPf3iTgbSL+cM=
-git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260417084557-ebf735348166 h1:lYnrICCrOAJjkzMfogsuz5Pa1BWEfpvtrjh7NpPcwkk=
-git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260417084557-ebf735348166/go.mod h1:AWZERUJwuDen2cANDeLNiYDp9AwVw+C0QjAZWSsdjgM=
+git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260417101312-536a8599f81a h1:2L+9dTDZ2/hOZ/wFdsH7/xrAtGV4pCG0HC15jVHlpAQ=
+git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260417101312-536a8599f81a/go.mod h1:AWZERUJwuDen2cANDeLNiYDp9AwVw+C0QjAZWSsdjgM=
 git.adsrv.wtf/clickadu/go-generics-tools v1.3.3 h1:kTPeRv6xHswOXP6n8VkNTVaSDuApvJDfSpcu0Kq79Zo=
 git.adsrv.wtf/clickadu/go-generics-tools v1.3.3/go.mod h1:TGrrHxzN0StN/qk61mQM8ezfiW6GL3mQCmIIGIkbc9Q=
 git.adsrv.wtf/clickadu/prometheus_golang_client v1.101.0 h1:s2y0wC/UglTvphUIKy+OYtXuDxixlUALPv2DOspheRY=

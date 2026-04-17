@@ -65,7 +65,7 @@ replace (
 require (
 	cloud.google.com/go/iam v1.5.3 // indirect
 	cloud.google.com/go/secretmanager v1.16.0 // indirect
-	git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260417084557-ebf735348166 // indirect
+	git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260417101312-536a8599f81a // indirect
 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest v0.11.30 // indirect
 	github.com/Azure/go-autorest/autorest/adal v0.9.24 // indirect
