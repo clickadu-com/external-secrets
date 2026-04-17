@@ -360,7 +360,7 @@ jobs:
           script: |
             const conclusion = process.env.AWS_RESULT + process.env.GCP_RESULT + process.env.AZURE_RESULT;
             const checkRunId = process.env.CHECK_RUN_ID;
-            
+
             // Determine the overall conclusion
             let finalConclusion = 'success';
             if (conclusion.includes('failure')) {
@@ -370,7 +370,7 @@ jobs:
             } else if (conclusion === '') {
               finalConclusion = 'skipped';
             }
-            
+
             if (checkRunId) {
               await github.rest.checks.update({
                 ...context.repo,

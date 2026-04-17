@@ -76,10 +76,10 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 	}
 
 	kt := models.CertificateKeyType(strings.ToUpper(prefix))
-	req := &certificate.GetReq{KeyType: &kt}
+	req := &certificate.GetReq{KeyType: &kt, NoCache: true}
 
 	switch filter {
-	case "id" :
+	case "id":
 		id, _ := strconv.ParseUint(value, 10, 32)
 		u32id := uint32(id)
 		req.ID = &u32id
@@ -90,6 +90,7 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 	}
 
 	resp, err := c.client.CertificateGet(ctx, req)
+
 	var cert *certificate.GetEntity
 	if err == nil && len(resp) > 0 {
 		cert = resp[0]
@@ -104,31 +105,35 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 				}
 			}
 		}
-		createResp, err := c.client.CertificateCreateNew(ctx, &certificate.CreateReqNew{
-			Name: value, KeyType: kt, Domains: domains, RequestedBy: ptr("ESO"),
+		createResp, err := c.client.CertificateCreateNew(ctx, &certificate.CreateReq{
+			Name: value, KeyType: kt, Domains: domains, RequestedBy: ptr("ESO"), Sync: true,
 		})
-		if err != nil {
-			return nil, fmt.Errorf("failed to provision certificate: %w", err)
-		}
 
-		// Try to get the newly created cert to verify accessibility and get its status
-		resp, err = c.client.CertificateGet(ctx, &certificate.GetReq{ID: &createResp.ID})
-		if err != nil {
-			return nil, fmt.Errorf("certificate created (ID: %d) but retrieval failed: %w", createResp.ID, err)
+		if err == nil && createResp.PEM.Public != "" {
+			cert = &certificate.GetEntity{
+				Certificate: createResp.Certificate,
+				PEM:         createResp.PEM,
+			}
+		} else {
+			var nerr *apiclient.NotAllowedError
+			if err != nil && !errors.As(err, &nerr) {
+				return nil, fmt.Errorf("failed to provision certificate: %w", err)
+			}
+
+			// Try to get the newly created cert to verify accessibility and get its status
+			resp, err := c.client.CertificateGet(ctx, req)
+			if err != nil {
+				return nil, fmt.Errorf("certificate created but retrieval failed: %w", err)
+			}
+			if len(resp) == 0 {
+				return nil, fmt.Errorf("certificate created but not found in subsequent request")
+			}
+			cert = resp[0]
 		}
-		if len(resp) == 0 {
-			return nil, fmt.Errorf("certificate created (ID: %d) but not found in subsequent request", createResp.ID)
-		}
-		cert = resp[0]
 	}
 
 	if cert == nil {
 		return nil, esv1.NoSecretErr
-	}
-
-	// 0 - New/Pending, 10 - Processing, 20 - RequestSent, 30 - Ok, 40+ - Errors
-	if cert.Status != models.CertificateStatusOk {
-		return nil, fmt.Errorf("certificate is not ready (ID: %d, status: %d)", cert.ID, cert.Status)
 	}
 
 	bundle := cert.PEM.Public

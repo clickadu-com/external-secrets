@@ -3,7 +3,7 @@ module github.com/external-secrets/external-secrets/providers/v1/dm
 go 1.26.2
 
 require (
-	git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260416125910-a81104062a37
+	git.adsrv.wtf/clickadu/domain-manager v0.4.13-0.20260417084557-ebf735348166
 	github.com/external-secrets/external-secrets/apis v0.0.0
 	github.com/external-secrets/external-secrets/runtime v0.0.0
 	github.com/stretchr/testify v1.11.1
@@ -12,7 +12,7 @@ require (
 )
 
 require (
-	git.adsrv.wtf/clickadu/bikini v1.0.43 // indirect
+	git.adsrv.wtf/clickadu/bikini v1.0.47 // indirect
 	git.adsrv.wtf/clickadu/go-generics-tools v1.3.3 // indirect
 	git.adsrv.wtf/clickadu/prometheus_golang_client v1.101.0 // indirect
 	github.com/aws/aws-sdk-go v1.55.8 // indirect
