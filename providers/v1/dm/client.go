@@ -94,19 +94,38 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 	var cert *certificate.GetEntity
 	if err == nil && len(resp) > 0 {
 		cert = resp[0]
-	} else if isMap && filter == "name" {
+	} else if filter == "name" {
 		domains := []string{value}
-		for _, sub := range strings.Split(ref.Property, ",") {
-			if s := strings.TrimSpace(sub); s != "" {
-				if strings.Contains(s, ".") {
-					domains = append(domains, s)
-				} else {
-					domains = append(domains, s+"."+value)
+
+		if isMap {
+			for _, sub := range strings.Split(ref.Property, ",") {
+				if s := strings.TrimSpace(sub); s != "" {
+					if strings.Contains(s, ".") {
+						domains = append(domains, s)
+					} else {
+						domains = append(domains, s+"."+value)
+					}
 				}
 			}
 		}
+
+		if ref.ExtraParamsMetaData != nil {
+			selfSigned = ref.ExtraParamsMetaData.SelfSigned
+			ca = ref.ExtraParamsMetaData.CA
+		}
+
 		createResp, err := c.client.CertificateCreateNew(ctx, &certificate.CreateReq{
-			Name: value, KeyType: kt, Domains: domains, RequestedBy: ptr("ESO"), Sync: true,
+			Name:         value,
+			KeyType:      kt,
+			Domains:      domains,
+			IPs:          nil,
+			Subject:      nil,
+			Emails:       nil,
+			ProviderType: nil,
+			ProviderName: nil,
+			RequestedBy:  ptr("ESO"),
+			Comment:      nil,
+			Sync:         true,
 		})
 
 		if err == nil && createResp != nil && createResp.Certificate != nil && createResp.PEM.Public != "" {

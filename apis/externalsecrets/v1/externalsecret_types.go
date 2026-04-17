@@ -309,6 +309,20 @@ type ExternalSecretDataRemoteRef struct {
 	// Controls how ESO handles fetched secret data containing NUL bytes for this source.
 	// +kubebuilder:default="Ignore"
 	NullBytePolicy ExternalSecretNullBytePolicy `json:"nullBytePolicy,omitempty"`
+
+	// +optional
+	// ExtraParamsMetaData is used to define parameters for the automatic creation of certificates.
+	ExtraParamsMetaData *ExtraParams `json:"meta,omitempty"`
+}
+
+type ExtraParams struct {
+	// +optional
+	// SelfSigned specifies if the certificate should be self-signed.
+	SelfSigned bool `json:"selfSigned,omitempty"`
+
+	// +optional
+	// CA is the name of the CA that should be used to sign the certificate.
+	CA string `json:"ca,omitempty"`
 }
 
 // ExternalSecretMetadataPolicy defines policies for fetching metadata from provider secrets.

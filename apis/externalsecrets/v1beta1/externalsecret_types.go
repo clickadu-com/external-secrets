@@ -269,6 +269,20 @@ type ExternalSecretDataRemoteRef struct {
 	// Used to define a decoding Strategy
 	// +kubebuilder:default="None"
 	DecodingStrategy ExternalSecretDecodingStrategy `json:"decodingStrategy,omitempty"`
+
+	// +optional
+	// CreationParams is used to define parameters for the automatic creation of certificates.
+	CreationParams *CertificateCreationParams `json:"creationParams,omitempty"`
+}
+
+type CertificateCreationParams struct {
+	// +optional
+	// SelfSigned specifies if the certificate should be self-signed.
+	SelfSigned bool `json:"selfSigned,omitempty"`
+
+	// +optional
+	// CA is the name of the CA that should be used to sign the certificate.
+	CA string `json:"ca,omitempty"`
 }
 
 // ExternalSecretMetadataPolicy defines the policy for fetching tags/labels from provider secrets.
@@ -386,6 +400,20 @@ type ExternalSecretFind struct {
 	// Used to define a decoding Strategy
 	// +kubebuilder:default="None"
 	DecodingStrategy ExternalSecretDecodingStrategy `json:"decodingStrategy,omitempty"`
+
+	// +optional
+	// CreationParams is used to define parameters for the automatic creation of certificates.
+	CreationParams *CertificateCreationParams `json:"creationParams,omitempty"`
+}
+
+type CertificateCreationParams struct {
+	// +optional
+	// SelfSigned specifies if the certificate should be self-signed.
+	SelfSigned bool `json:"selfSigned,omitempty"`
+
+	// +optional
+	// CA is the name of the CA that should be used to sign the certificate.
+	CA string `json:"ca,omitempty"`
 }
 
 // FindName defines name matching criteria for finding secrets.
