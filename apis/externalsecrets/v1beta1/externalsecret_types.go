@@ -271,18 +271,51 @@ type ExternalSecretDataRemoteRef struct {
 	DecodingStrategy ExternalSecretDecodingStrategy `json:"decodingStrategy,omitempty"`
 
 	// +optional
-	// CreationParams is used to define parameters for the automatic creation of certificates.
-	CreationParams *CertificateCreationParams `json:"creationParams,omitempty"`
+	// GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+	GeneratorMetaData *ExternalSecretGeneratorPayload `json:"generator,omitempty"`
 }
 
-type CertificateCreationParams struct {
+type ExternalSecretGeneratorPayload struct {
 	// +optional
-	// SelfSigned specifies if the certificate should be self-signed.
-	SelfSigned bool `json:"selfSigned,omitempty"`
+	// ProviderName specifies the provider name to use for the certificate.
+	ProviderName string `json:"providerName,omitempty"`
 
 	// +optional
-	// CA is the name of the CA that should be used to sign the certificate.
-	CA string `json:"ca,omitempty"`
+	// ProviderType specifies the provider type to use for the certificate.
+	ProviderType string `json:"providerType,omitempty"`
+
+	// +optional
+	// Sync specifies if the certificate should be synced immediately.
+	Sync bool `json:"sync,omitempty"`
+
+	// +optional
+	// Subject specifies the certificate subject information.
+	Subject *ExternalSecretGeneratorSubject `json:"subject,omitempty"`
+
+	// +optional
+	// IPAddresses specifies the IP addresses for the certificate.
+	IPAddresses []string `json:"ipAddresses,omitempty"`
+
+	// +optional
+	// DNSNames specifies the DNS names (SANs) for the certificate.
+	DNSNames []string `json:"dnsNames,omitempty"`
+}
+
+type ExternalSecretGeneratorSubject struct {
+	// +optional
+	Country string `json:"country,omitempty"`
+	// +optional
+	Organization string `json:"organization,omitempty"`
+	// +optional
+	OrganizationalUnit string `json:"organizationalUnit,omitempty"`
+	// +optional
+	Locality string `json:"locality,omitempty"`
+	// +optional
+	Province string `json:"province,omitempty"`
+	// +optional
+	StreetAddress string `json:"streetAddress,omitempty"`
+	// +optional
+	PostalCode string `json:"postalCode,omitempty"`
 }
 
 // ExternalSecretMetadataPolicy defines the policy for fetching tags/labels from provider secrets.
@@ -345,6 +378,10 @@ type ExternalSecretDataFromRemoteRef struct {
 	// When sourceRef points to a generator Extract or Find is not supported.
 	// The generator returns a static map of values
 	SourceRef *StoreGeneratorSourceRef `json:"sourceRef,omitempty"`
+
+	// +optional
+	// GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+	GeneratorMetaData *ExternalSecretGeneratorPayload `json:"generator,omitempty"`
 }
 
 // ExternalSecretRewrite defines rules on how to rewrite secret keys.
@@ -402,18 +439,8 @@ type ExternalSecretFind struct {
 	DecodingStrategy ExternalSecretDecodingStrategy `json:"decodingStrategy,omitempty"`
 
 	// +optional
-	// CreationParams is used to define parameters for the automatic creation of certificates.
-	CreationParams *CertificateCreationParams `json:"creationParams,omitempty"`
-}
-
-type CertificateCreationParams struct {
-	// +optional
-	// SelfSigned specifies if the certificate should be self-signed.
-	SelfSigned bool `json:"selfSigned,omitempty"`
-
-	// +optional
-	// CA is the name of the CA that should be used to sign the certificate.
-	CA string `json:"ca,omitempty"`
+	// GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+	GeneratorMetaData *ExternalSecretGeneratorPayload `json:"generator,omitempty"`
 }
 
 // FindName defines name matching criteria for finding secrets.
