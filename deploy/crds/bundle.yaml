@@ -125,19 +125,8 @@ spec:
                                   subject:
                                     description: Subject specifies the certificate subject information.
                                     properties:
-                                      country:
-                                        type: string
-                                      locality:
-                                        type: string
-                                      organization:
-                                        type: string
-                                      organizationalUnit:
-                                        type: string
-                                      postalCode:
-                                        type: string
-                                      province:
-                                        type: string
-                                      streetAddress:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
                                         type: string
                                     type: object
                                   sync:
@@ -300,19 +289,8 @@ spec:
                                   subject:
                                     description: Subject specifies the certificate subject information.
                                     properties:
-                                      country:
-                                        type: string
-                                      locality:
-                                        type: string
-                                      organization:
-                                        type: string
-                                      organizationalUnit:
-                                        type: string
-                                      postalCode:
-                                        type: string
-                                      province:
-                                        type: string
-                                      streetAddress:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
                                         type: string
                                     type: object
                                   sync:
@@ -411,19 +389,8 @@ spec:
                               subject:
                                 description: Subject specifies the certificate subject information.
                                 properties:
-                                  country:
-                                    type: string
-                                  locality:
-                                    type: string
-                                  organization:
-                                    type: string
-                                  organizationalUnit:
-                                    type: string
-                                  postalCode:
-                                    type: string
-                                  province:
-                                    type: string
-                                  streetAddress:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
                                     type: string
                                 type: object
                               sync:
@@ -1075,19 +1042,8 @@ spec:
                                   subject:
                                     description: Subject specifies the certificate subject information.
                                     properties:
-                                      country:
-                                        type: string
-                                      locality:
-                                        type: string
-                                      organization:
-                                        type: string
-                                      organizationalUnit:
-                                        type: string
-                                      postalCode:
-                                        type: string
-                                      province:
-                                        type: string
-                                      streetAddress:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
                                         type: string
                                     type: object
                                   sync:
@@ -1239,19 +1195,8 @@ spec:
                                   subject:
                                     description: Subject specifies the certificate subject information.
                                     properties:
-                                      country:
-                                        type: string
-                                      locality:
-                                        type: string
-                                      organization:
-                                        type: string
-                                      organizationalUnit:
-                                        type: string
-                                      postalCode:
-                                        type: string
-                                      province:
-                                        type: string
-                                      streetAddress:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
                                         type: string
                                     type: object
                                   sync:
@@ -1320,19 +1265,8 @@ spec:
                                   subject:
                                     description: Subject specifies the certificate subject information.
                                     properties:
-                                      country:
-                                        type: string
-                                      locality:
-                                        type: string
-                                      organization:
-                                        type: string
-                                      organizationalUnit:
-                                        type: string
-                                      postalCode:
-                                        type: string
-                                      province:
-                                        type: string
-                                      streetAddress:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
                                         type: string
                                     type: object
                                   sync:
@@ -1377,19 +1311,8 @@ spec:
                               subject:
                                 description: Subject specifies the certificate subject information.
                                 properties:
-                                  country:
-                                    type: string
-                                  locality:
-                                    type: string
-                                  organization:
-                                    type: string
-                                  organizationalUnit:
-                                    type: string
-                                  postalCode:
-                                    type: string
-                                  province:
-                                    type: string
-                                  streetAddress:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
                                     type: string
                                 type: object
                               sync:
@@ -12869,19 +12792,8 @@ spec:
                               subject:
                                 description: Subject specifies the certificate subject information.
                                 properties:
-                                  country:
-                                    type: string
-                                  locality:
-                                    type: string
-                                  organization:
-                                    type: string
-                                  organizationalUnit:
-                                    type: string
-                                  postalCode:
-                                    type: string
-                                  province:
-                                    type: string
-                                  streetAddress:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
                                     type: string
                                 type: object
                               sync:
@@ -13044,19 +12956,8 @@ spec:
                               subject:
                                 description: Subject specifies the certificate subject information.
                                 properties:
-                                  country:
-                                    type: string
-                                  locality:
-                                    type: string
-                                  organization:
-                                    type: string
-                                  organizationalUnit:
-                                    type: string
-                                  postalCode:
-                                    type: string
-                                  province:
-                                    type: string
-                                  streetAddress:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
                                     type: string
                                 type: object
                               sync:
@@ -13155,19 +13056,8 @@ spec:
                           subject:
                             description: Subject specifies the certificate subject information.
                             properties:
-                              country:
-                                type: string
-                              locality:
-                                type: string
-                              organization:
-                                type: string
-                              organizationalUnit:
-                                type: string
-                              postalCode:
-                                type: string
-                              province:
-                                type: string
-                              streetAddress:
+                              commonName:
+                                description: CommonName specifies the common name for the certificate.
                                 type: string
                             type: object
                           sync:
@@ -13705,19 +13595,8 @@ spec:
                               subject:
                                 description: Subject specifies the certificate subject information.
                                 properties:
-                                  country:
-                                    type: string
-                                  locality:
-                                    type: string
-                                  organization:
-                                    type: string
-                                  organizationalUnit:
-                                    type: string
-                                  postalCode:
-                                    type: string
-                                  province:
-                                    type: string
-                                  streetAddress:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
                                     type: string
                                 type: object
                               sync:
@@ -13869,19 +13748,8 @@ spec:
                               subject:
                                 description: Subject specifies the certificate subject information.
                                 properties:
-                                  country:
-                                    type: string
-                                  locality:
-                                    type: string
-                                  organization:
-                                    type: string
-                                  organizationalUnit:
-                                    type: string
-                                  postalCode:
-                                    type: string
-                                  province:
-                                    type: string
-                                  streetAddress:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
                                     type: string
                                 type: object
                               sync:
@@ -13950,19 +13818,8 @@ spec:
                               subject:
                                 description: Subject specifies the certificate subject information.
                                 properties:
-                                  country:
-                                    type: string
-                                  locality:
-                                    type: string
-                                  organization:
-                                    type: string
-                                  organizationalUnit:
-                                    type: string
-                                  postalCode:
-                                    type: string
-                                  province:
-                                    type: string
-                                  streetAddress:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
                                     type: string
                                 type: object
                               sync:
@@ -14007,19 +13864,8 @@ spec:
                           subject:
                             description: Subject specifies the certificate subject information.
                             properties:
-                              country:
-                                type: string
-                              locality:
-                                type: string
-                              organization:
-                                type: string
-                              organizationalUnit:
-                                type: string
-                              postalCode:
-                                type: string
-                              province:
-                                type: string
-                              streetAddress:
+                              commonName:
+                                description: CommonName specifies the common name for the certificate.
                                 type: string
                             type: object
                           sync:

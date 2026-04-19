@@ -140,27 +140,25 @@ func TestCertificate_Provisioning_Only_In_DataFrom(t *testing.T) {
 			ProviderName: "MY_ISSUER",
 			ProviderType: "ZEROSSL",
 			Subject: &esv1.ExternalSecretGeneratorSubject{
-				Organization: "Test Org",
-				Country:      "US",
+				CommonName: "Test CN",
 			},
 			IPAddresses: []string{"1.1.1.1"},
 			DNSNames:    []string{"web"},
 			Sync:        true,
 		},
-	}
+		}
+		resMap, err := client.GetSecretMap(ctx, ref)
+		assert.NoError(t, err)
+		assert.Len(t, resMap, 1)
+		assert.Contains(t, resMap, "bundle")
 
-	resMap, err := client.GetSecretMap(ctx, ref)
-	assert.NoError(t, err)
-	assert.Len(t, resMap, 1)
-	assert.Contains(t, resMap, "bundle")
+		assert.Equal(t, "MY_ISSUER", capturedReq["providerName"])
+		assert.Equal(t, "ZEROSSL", capturedReq["providerType"])
+		assert.Equal(t, true, capturedReq["sync"])
+		assert.Equal(t, []any{"1.1.1.1"}, capturedReq["ips"])
+		assert.Equal(t, []any{"test.com", "web.test.com"}, capturedReq["domains"])
 
-	assert.Equal(t, "MY_ISSUER", capturedReq["providerName"])
-	assert.Equal(t, "ZEROSSL", capturedReq["providerType"])
-	assert.Equal(t, true, capturedReq["sync"])
-	assert.Equal(t, []any{"1.1.1.1"}, capturedReq["ips"])
-	assert.Equal(t, []any{"test.com", "web.test.com"}, capturedReq["domains"])
+		subject := capturedReq["subject"].(map[string]any)
+		assert.Equal(t, "Test CN", subject["CommonName"])
+		}
 
-	subject := capturedReq["subject"].(map[string]any)
-	assert.Equal(t, []any{"Test Org"}, subject["Organization"])
-	assert.Equal(t, []any{"US"}, subject["Country"])
-	}

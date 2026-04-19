@@ -121,28 +121,9 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 				providerType = &pType
 			}
 			sync = ref.GeneratorMetaData.Sync
-			if ref.GeneratorMetaData.Subject != nil {
-				subject = &pkix.Name{}
-				if ref.GeneratorMetaData.Subject.Country != "" {
-					subject.Country = []string{ref.GeneratorMetaData.Subject.Country}
-				}
-				if ref.GeneratorMetaData.Subject.Organization != "" {
-					subject.Organization = []string{ref.GeneratorMetaData.Subject.Organization}
-				}
-				if ref.GeneratorMetaData.Subject.OrganizationalUnit != "" {
-					subject.OrganizationalUnit = []string{ref.GeneratorMetaData.Subject.OrganizationalUnit}
-				}
-				if ref.GeneratorMetaData.Subject.Locality != "" {
-					subject.Locality = []string{ref.GeneratorMetaData.Subject.Locality}
-				}
-				if ref.GeneratorMetaData.Subject.Province != "" {
-					subject.Province = []string{ref.GeneratorMetaData.Subject.Province}
-				}
-				if ref.GeneratorMetaData.Subject.StreetAddress != "" {
-					subject.StreetAddress = []string{ref.GeneratorMetaData.Subject.StreetAddress}
-				}
-				if ref.GeneratorMetaData.Subject.PostalCode != "" {
-					subject.PostalCode = []string{ref.GeneratorMetaData.Subject.PostalCode}
+			if ref.GeneratorMetaData.Subject != nil && ref.GeneratorMetaData.Subject.CommonName != "" {
+				subject = &pkix.Name{
+					CommonName: ref.GeneratorMetaData.Subject.CommonName,
 				}
 			}
 			ips = ref.GeneratorMetaData.IPAddresses

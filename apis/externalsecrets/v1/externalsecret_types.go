@@ -343,19 +343,8 @@ type ExternalSecretGeneratorPayload struct {
 
 type ExternalSecretGeneratorSubject struct {
 	// +optional
-	Country string `json:"country,omitempty"`
-	// +optional
-	Organization string `json:"organization,omitempty"`
-	// +optional
-	OrganizationalUnit string `json:"organizationalUnit,omitempty"`
-	// +optional
-	Locality string `json:"locality,omitempty"`
-	// +optional
-	Province string `json:"province,omitempty"`
-	// +optional
-	StreetAddress string `json:"streetAddress,omitempty"`
-	// +optional
-	PostalCode string `json:"postalCode,omitempty"`
+	// CommonName specifies the common name for the certificate.
+	CommonName string `json:"commonName,omitempty"`
 }
 
 // ExternalSecretMetadataPolicy defines policies for fetching metadata from provider secrets.

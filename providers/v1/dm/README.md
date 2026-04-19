@@ -5,7 +5,7 @@
 ## Возможности
 *   **Получение существующих сертификатов**: Чтение по имени или ID.
 *   **Автоматический выпуск**: Создание новых сертификатов прямо из ESO, если они отсутствуют в DM.
-*   **Гибкая конфигурация**: Настройка провайдера (`providerName`), типа движка (`providerType`) и данных субъекта (`subject`).
+*   **Гибкая конфигурация**: Настройка провайдера (`providerName`), типа движка (`providerType`) и Common Name (`commonName`) через поле `generator`.
 
 ## Настройка SecretStore
 
@@ -50,11 +50,11 @@ spec:
 | Поле | JSON-тег | Тип | Описание |
 |------|----------|-----|----------|
 | `ProviderName` | `providerName` | `string` | Имя провайдера в DM (напр. `LE_PROD`, `ZERO_SSL`) |
-| `ProviderType` | `providerType` | `string` | Тип движка (`LETSENCRYPT`, `ZEROSSL`, `SELF`) |
+| `ProviderType` | `providerType` | `string` | Тип движка (`acme`, `ca`) |
 | `Sync` | `sync` | `bool` | Синхронизировать сертификат немедленно (по умолчанию `true`) |
+| `Subject` | `subject` | `object` | Данные субъекта (содержит `commonName`) |
 | `DNSNames` | `dnsNames` | `[]string` | Список доп. имен (SAN) |
 | `IPAddresses` | `ipAddresses` | `[]string` | Список IP адресов |
-| `Subject` | `subject` | `object` | Данные субъекта (Country, Organization и др.) |
 
 ### 1. Получение отдельных полей (`data`)
 
@@ -83,7 +83,9 @@ spec:
         property: bundle
         generator:
           providerName: "LE_PROD"
-          providerType: "LETSENCRYPT"
+          providerType: "acme"
+          subject:
+            commonName: "example.com"
           dnsNames: ["www", "api"]
 ```
 
@@ -91,7 +93,7 @@ spec:
 
 В режиме `dataFrom` (через `extract`) провайдер по умолчанию возвращает карту с двумя ключами: `bundle` и `key`. Если указано поле `property`, будет возвращено только выбранное поле.
 
-#### Пример (стандартный TLS секрет):
+#### Пример:
 ```yaml
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -111,16 +113,10 @@ spec:
     - extract:
         key: rsa/name/mysite.com
         generator:
-          providerType: "ZEROSSL"
+          providerType: "acme"
+          subject:
+            commonName: "mysite.com"
           dnsNames: ["www"]
-```
-
-#### Пример (только одно поле):
-```yaml
-  dataFrom:
-    - extract:
-        key: rsa/name/mysite.com
-        property: cert # Вернет только cert
 ```
 
 ---
