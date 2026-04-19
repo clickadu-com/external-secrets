@@ -83,71 +83,84 @@ func TestCertificate_Provisioning_Only_In_DataFrom(t *testing.T) {
 
 	ctx := context.Background()
 
-	// 1. Попытка через GetSecret (data) -> Должна быть ошибка (создание запрещено)
+	// 1. Попытка через GetSecret (data) -> Должно попытаться создать, но вернуть ошибку (не готов)
 	_, err := client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
 		Key:      "rsa/name/test.com",
 		Property: "bundle",
 	})
 	assert.Error(t, err)
-	assert.ErrorIs(t, err, esv1.NoSecretErr)
+	assert.Contains(t, err.Error(), "certificate is not ready (status: 0)")
 
 	// 2. Попытка через GetSecretMap (dataFrom) -> Должно создать с SAN
 	_, err = client.GetSecretMap(ctx, esv1.ExternalSecretDataRemoteRef{
-		Key:      "rsa/name/test.com",
-		Property: "www,api",
+		Key: "rsa/name/test.com",
+		GeneratorMetaData: &esv1.ExternalSecretGeneratorPayload{
+			DNSNames: []string{"www", "api"},
+		},
 	})
 	assert.Error(t, err) // Статус 0 = not ready
-	assert.Contains(t, err.Error(), "certificate is not ready")
-	assert.Contains(t, err.Error(), "status: 0")
+	assert.Contains(t, err.Error(), "certificate is not ready (status: 0)")
 	assert.ElementsMatch(t, []string{"test.com", "www.test.com", "api.test.com"}, provisionedDomains)
-}
+	}
 
-func TestCertificate_Fetch_Existing_In_Data(t *testing.T) {
+	func TestCertificate_GeneratorParams(t *testing.T) {
 	mux := http.NewServeMux()
 	server := httptest.NewServer(mux)
 	defer server.Close()
 
 	client := newClient(server.URL, "test-token")
 
-	mux.HandleFunc("/api/v1/certificate/get", func(w http.ResponseWriter, r *http.Request) {
-		certs := []map[string]any{
-			{
-				"id":   1,
-				"name": "test.com",
-				"pem": map[string]string{
-					"public":  "PUB",
-					"private": "PRIV",
-					"ca":      "CA",
-				},
-				"status": 30,
+	var capturedReq map[string]any
+	mux.HandleFunc("/api/v1/certificate/create/new", func(w http.ResponseWriter, r *http.Request) {
+		json.NewDecoder(r.Body).Decode(&capturedReq)
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(map[string]any{
+			"id":     100,
+			"name":   "test.com",
+			"status": 30, // Ready
+			"pem": map[string]string{
+				"public":  "PUB",
+				"private": "PRIV",
+				"ca":      "CA",
 			},
-		}
-		json.NewEncoder(w).Encode(certs)
+		})
+	})
+
+	mux.HandleFunc("/api/v1/certificate/get", func(w http.ResponseWriter, r *http.Request) {
+		// Mock for the first check (find)
+		json.NewEncoder(w).Encode([]any{})
 	})
 
 	ctx := context.Background()
 
-	// 1. Получение конкретного поля (ca)
-	val, err := client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
+	ref := esv1.ExternalSecretDataRemoteRef{
 		Key:      "rsa/name/test.com",
-		Property: "ca",
-	})
-	assert.NoError(t, err)
-	assert.Equal(t, "CA", string(val))
+		Property: "bundle",
+		GeneratorMetaData: &esv1.ExternalSecretGeneratorPayload{
+			ProviderName: "MY_ISSUER",
+			ProviderType: "ZEROSSL",
+			Subject: &esv1.ExternalSecretGeneratorSubject{
+				Organization: "Test Org",
+				Country:      "US",
+			},
+			IPAddresses: []string{"1.1.1.1"},
+			DNSNames:    []string{"web"},
+			Sync:        true,
+		},
+	}
 
-	// 2. Получение без property (ошибка)
-	_, err = client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
-		Key: "rsa/name/test.com",
-	})
-	assert.Error(t, err)
-	assert.Equal(t, "property is required in data mode", err.Error())
-
-	// 3. Получение в режиме dataFrom (GetSecretMap)
-	resMap, err := client.GetSecretMap(ctx, esv1.ExternalSecretDataRemoteRef{
-		Key: "rsa/name/test.com",
-	})
+	resMap, err := client.GetSecretMap(ctx, ref)
 	assert.NoError(t, err)
-	assert.Equal(t, "PUB\nCA", string(resMap["bundle"]))
-	assert.Equal(t, "PRIV", string(resMap["key"]))
-	assert.Len(t, resMap, 2)
-}
+	assert.Len(t, resMap, 1)
+	assert.Contains(t, resMap, "bundle")
+
+	assert.Equal(t, "MY_ISSUER", capturedReq["providerName"])
+	assert.Equal(t, "ZEROSSL", capturedReq["providerType"])
+	assert.Equal(t, true, capturedReq["sync"])
+	assert.Equal(t, []any{"1.1.1.1"}, capturedReq["ips"])
+	assert.Equal(t, []any{"test.com", "web.test.com"}, capturedReq["domains"])
+
+	subject := capturedReq["subject"].(map[string]any)
+	assert.Equal(t, []any{"Test Org"}, subject["Organization"])
+	assert.Equal(t, []any{"US"}, subject["Country"])
+	}

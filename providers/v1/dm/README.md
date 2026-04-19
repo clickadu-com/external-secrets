@@ -1,12 +1,17 @@
 # Провайдер Domain Manager (DM)
 
-Провайдер **Domain Manager (DM)** интегрирует управление SSL-сертификатами Clickadu в Kubernetes через External Secrets Operator.
+Провайдер **Domain Manager (DM)** позволяет интегрировать систему управления SSL-сертификатами Clickadu в Kubernetes через External Secrets Operator (ESO).
 
-## Настройка Store
+## Возможности
+*   **Получение существующих сертификатов**: Чтение по имени или ID.
+*   **Автоматический выпуск**: Создание новых сертификатов прямо из ESO, если они отсутствуют в DM.
+*   **Гибкая конфигурация**: Настройка провайдера (`providerName`), типа движка (`providerType`) и данных субъекта (`subject`).
 
-Для использования провайдера необходимо создать `SecretStore` или `ClusterSecretStore` с указанием URL API и токена доступа.
+## Настройка SecretStore
 
-### Создание Secret с токеном
+Для работы провайдера требуется URL API и токен доступа.
+
+### 1. Создание Secret с токеном
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -17,7 +22,7 @@ stringData:
   token: "ваш_api_токен"
 ```
 
-### SecretStore
+### 2. Конфигурация SecretStore
 ```yaml
 apiVersion: external-secrets.io/v1
 kind: SecretStore
@@ -38,86 +43,90 @@ spec:
 
 ## Использование в ExternalSecret
 
-### 1. Режим Чтения (`data`)
-Используется для получения полей **существующих** сертификатов.
+### Параметры выпуска сертификата (`generator`)
 
-**Внимание**: Поле `property` является **обязательным**.
+Если сертификат не найден в базе DM по доменному имени, провайдер попытается создать его, используя параметры из поля `generator`.
+
+| Поле | JSON-тег | Тип | Описание |
+|------|----------|-----|----------|
+| `ProviderName` | `providerName` | `string` | Имя провайдера в DM (напр. `LE_PROD`, `ZERO_SSL`) |
+| `ProviderType` | `providerType` | `string` | Тип движка (`LETSENCRYPT`, `ZEROSSL`, `SELF`) |
+| `Sync` | `sync` | `bool` | Синхронизировать сертификат немедленно (по умолчанию `true`) |
+| `DNSNames` | `dnsNames` | `[]string` | Список доп. имен (SAN) |
+| `IPAddresses` | `ipAddresses` | `[]string` | Список IP адресов |
+| `Subject` | `subject` | `object` | Данные субъекта (Country, Organization и др.) |
+
+### 1. Получение отдельных полей (`data`)
+
+Используйте поле `property` для выбора конкретной части сертификата.
 
 | Поле `property` | Описание |
-|-------|----------|
+|-----------------|----------|
 | `bundle` | Fullchain (сертификат + CA) |
 | `cert` | Только тело сертификата |
 | `ca` | Только CA (root/intermediate) |
 | `key` | Приватный ключ |
 
-#### Примеры (data):
+#### Пример:
 ```yaml
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: dm-certs
+  name: example-com-tls
 spec:
   secretStoreRef:
     name: dm-store
-    kind: SecretStore
-  target:
-    name: my-tls-secret
   data:
-    # Получение Fullchain по имени (RSA)
     - secretKey: tls.crt
       remoteRef:
         key: rsa/name/example.com
         property: bundle
-
-    # Получение ключа по имени (RSA)
-    - secretKey: tls.key
-      remoteRef:
-        key: rsa/name/example.com
-        property: key
-
-    # Получение по ID сертификата (ECDSA)
-    - secretKey: cert-only.pem
-      remoteRef:
-        key: ecdsa/id/12345
-        property: cert
+        generator:
+          providerName: "LE_PROD"
+          providerType: "LETSENCRYPT"
+          dnsNames: ["www", "api"]
 ```
 
-### 2. Режим Авто-выпуска (`dataFrom`)
-Используется для **автоматического создания** сертификатов, если они еще не существуют. Провайдер сам найдет домен и закажет сертификат.
+### 2. Автоматический выпуск всех полей (`dataFrom`)
 
-- **key**: `rsa/name/<domain>` или `ecdsa/name/<domain>`
-- **property**: список SAN (субдоменов) через запятую.
-- **Результат**: всегда создает два ключа в K8s Secret: `bundle` и `key`.
+В режиме `dataFrom` (через `extract`) провайдер по умолчанию возвращает карту с двумя ключами: `bundle` и `key`. Если указано поле `property`, будет возвращено только выбранное поле.
 
-#### Примеры (dataFrom):
+#### Пример (стандартный TLS секрет):
 ```yaml
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: dm-auto-tls
+  name: mysite-tls
 spec:
   secretStoreRef:
     name: dm-store
-    kind: SecretStore
   target:
-    name: auto-tls-secret
+    name: mysite-tls
     template:
       type: kubernetes.io/tls
       data:
         tls.crt: "{{ .bundle }}"
         tls.key: "{{ .key }}"
   dataFrom:
-    # Если сертификата для my-site.com нет — он будет создан.
-    # Будут добавлены SAN: www.my-site.com и api.my-site.com
     - extract:
-        key: rsa/name/my-site.com
-        property: "www,api"
+        key: rsa/name/mysite.com
+        generator:
+          providerType: "ZEROSSL"
+          dnsNames: ["www"]
+```
+
+#### Пример (только одно поле):
+```yaml
+  dataFrom:
+    - extract:
+        key: rsa/name/mysite.com
+        property: cert # Вернет только cert
 ```
 
 ---
 
 ## Форматы ключей (Key)
-* `rsa/name/<host>` — Поиск или Создание RSA сертификата.
-* `ecdsa/name/<host>` — Поиск или Создание ECDSA сертификата.
-* `rsa/id/<id>` — Поиск по ID (только чтение).
-* `ecdsa/id/<id>` — Поиск по ID (только чтение).
+
+*   `rsa/name/<host>` — Поиск или создание RSA сертификата.
+*   `ecdsa/name/<host>` — Поиск или создание ECDSA сертификата.
+*   `rsa/id/<id>` — Только чтение по ID.

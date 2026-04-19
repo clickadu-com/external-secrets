@@ -71,10 +71,43 @@ func validateExternalSecret(es *ExternalSecret) (admission.Warnings, error) {
 		if err := validateSourceRef(ref); err != nil {
 			errs = errors.Join(errs, err)
 		}
+
+		if ref.GeneratorMetaData != nil {
+			if err := validateGeneratorPayload(ref.GeneratorMetaData); err != nil {
+				errs = errors.Join(errs, err)
+			}
+		}
+	}
+
+	for _, data := range es.Spec.Data {
+		if data.RemoteRef.GeneratorMetaData != nil {
+			if err := validateGeneratorPayload(data.RemoteRef.GeneratorMetaData); err != nil {
+				errs = errors.Join(errs, err)
+			}
+		}
 	}
 
 	errs = validateDuplicateKeys(es, errs)
 	return nil, errs
+}
+
+func validateGeneratorPayload(payload *ExternalSecretGeneratorPayload) error {
+	if payload == nil {
+		return nil
+	}
+
+	// Example validation for providerType
+	if payload.ProviderType != "" {
+		allowedTypes := map[string]bool{
+			"acme": true,
+			"ca":   true,
+		}
+		if !allowedTypes[payload.ProviderType] {
+			return fmt.Errorf("invalid providerType: %s. Allowed values: acme, ca", payload.ProviderType)
+		}
+	}
+
+	return nil
 }
 
 func validateSourceRef(ref ExternalSecretDataFromRemoteRef) error {

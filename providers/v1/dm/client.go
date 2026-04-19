@@ -18,6 +18,7 @@ package dm
 
 import (
 	"context"
+	"crypto/x509/pkix"
 	"errors"
 	"fmt"
 	"strconv"
@@ -62,6 +63,13 @@ func (c *apiClientWrapper) GetSecretMap(ctx context.Context, ref esv1.ExternalSe
 	if err != nil {
 		return nil, err
 	}
+	if ref.Property != "" {
+		val, ok := data[ref.Property]
+		if !ok {
+			return nil, fmt.Errorf("property %s not found", ref.Property)
+		}
+		return map[string][]byte{ref.Property: val}, nil
+	}
 	return map[string][]byte{"bundle": data["bundle"], "key": data["key"]}, nil
 }
 
@@ -97,35 +105,73 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 	} else if filter == "name" {
 		domains := []string{value}
 
-		if isMap {
-			for _, sub := range strings.Split(ref.Property, ",") {
-				if s := strings.TrimSpace(sub); s != "" {
-					if strings.Contains(s, ".") {
-						domains = append(domains, s)
-					} else {
-						domains = append(domains, s+"."+value)
-					}
+		var providerName *models.ProviderCertName
+		var providerType *models.ProviderCertType
+		var subject *pkix.Name
+		var ips []string
+		sync := true
+
+		if ref.GeneratorMetaData != nil {
+			if ref.GeneratorMetaData.ProviderName != "" {
+				pName := models.ProviderCertName(ref.GeneratorMetaData.ProviderName)
+				providerName = &pName
+			}
+			if ref.GeneratorMetaData.ProviderType != "" {
+				pType := models.ProviderCertType(ref.GeneratorMetaData.ProviderType)
+				providerType = &pType
+			}
+			sync = ref.GeneratorMetaData.Sync
+			if ref.GeneratorMetaData.Subject != nil {
+				subject = &pkix.Name{}
+				if ref.GeneratorMetaData.Subject.Country != "" {
+					subject.Country = []string{ref.GeneratorMetaData.Subject.Country}
+				}
+				if ref.GeneratorMetaData.Subject.Organization != "" {
+					subject.Organization = []string{ref.GeneratorMetaData.Subject.Organization}
+				}
+				if ref.GeneratorMetaData.Subject.OrganizationalUnit != "" {
+					subject.OrganizationalUnit = []string{ref.GeneratorMetaData.Subject.OrganizationalUnit}
+				}
+				if ref.GeneratorMetaData.Subject.Locality != "" {
+					subject.Locality = []string{ref.GeneratorMetaData.Subject.Locality}
+				}
+				if ref.GeneratorMetaData.Subject.Province != "" {
+					subject.Province = []string{ref.GeneratorMetaData.Subject.Province}
+				}
+				if ref.GeneratorMetaData.Subject.StreetAddress != "" {
+					subject.StreetAddress = []string{ref.GeneratorMetaData.Subject.StreetAddress}
+				}
+				if ref.GeneratorMetaData.Subject.PostalCode != "" {
+					subject.PostalCode = []string{ref.GeneratorMetaData.Subject.PostalCode}
 				}
 			}
-		}
+			ips = ref.GeneratorMetaData.IPAddresses
 
-		if ref.ExtraParamsMetaData != nil {
-			selfSigned = ref.ExtraParamsMetaData.SelfSigned
-			ca = ref.ExtraParamsMetaData.CA
+			// Fill SANs from DNSNames
+			for _, san := range ref.GeneratorMetaData.DNSNames {
+				if san == "" {
+					continue
+				}
+				if strings.Contains(san, ".") {
+					domains = append(domains, san)
+				} else {
+					domains = append(domains, san+"."+value)
+				}
+			}
 		}
 
 		createResp, err := c.client.CertificateCreateNew(ctx, &certificate.CreateReq{
 			Name:         value,
 			KeyType:      kt,
 			Domains:      domains,
-			IPs:          nil,
-			Subject:      nil,
+			IPs:          ips,
+			Subject:      subject,
 			Emails:       nil,
-			ProviderType: nil,
-			ProviderName: nil,
+			ProviderType: providerType,
+			ProviderName: providerName,
 			RequestedBy:  ptr("ESO"),
 			Comment:      nil,
-			Sync:         true,
+			Sync:         sync,
 		})
 
 		if err == nil && createResp != nil && createResp.Certificate != nil && createResp.PEM.Public != "" {
@@ -162,6 +208,10 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 
 	if cert == nil {
 		return nil, esv1.NoSecretErr
+	}
+
+	if cert.Certificate.Status != 30 {
+		return nil, fmt.Errorf("certificate is not ready (status: %d)", cert.Certificate.Status)
 	}
 
 	bundle := cert.PEM.Public
