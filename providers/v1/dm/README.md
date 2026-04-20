@@ -82,7 +82,7 @@ spec:
         key: rsa/name/example.com
         property: bundle
         generator:
-          providerName: "LE_PROD"
+          providerName: "google-http"
           providerType: "acme"
           subject:
             commonName: "example.com"
@@ -91,7 +91,7 @@ spec:
 
 ### 2. Автоматический выпуск всех полей (`dataFrom`)
 
-В режиме `dataFrom` (через `extract`) провайдер по умолчанию возвращает карту с двумя ключами: `bundle` и `key`. Если указано поле `property`, будет возвращено только выбранное поле.
+В режиме `dataFrom` (через `extract`) провайдер по умолчанию возвращает карту со всеми доступными полями: `bundle`, `cert`, `ca` и `key`. Если указано поле `property`, будет возвращено только выбранное поле.
 
 #### Пример:
 ```yaml
@@ -105,8 +105,10 @@ spec:
   target:
     name: mysite-tls
     template:
+      engineVersion: v2
       type: kubernetes.io/tls
       data:
+        ca.crt: "{{ .ca }}"
         tls.crt: "{{ .bundle }}"
         tls.key: "{{ .key }}"
   dataFrom:
@@ -117,6 +119,41 @@ spec:
           subject:
             commonName: "mysite.com"
           dnsNames: ["www"]
+```
+
+### 3. Работа с несколькими сертификатами (`rewrite`)
+
+Если в одном `ExternalSecret` нужно объединить несколько сертификатов, используйте механизм `rewrite`, чтобы избежать коллизии ключей (`ca`, `key` и т.д.).
+
+#### Пример:
+```yaml
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: multi-cert-secret
+spec:
+  secretStoreRef:
+    name: dm-store
+  dataFrom:
+    - extract:
+        key: ecdsa/name/auth-server
+      rewrite:
+        - regexp:
+            source: "(.*)"
+            target: "auth_$1" # Ключи станут auth_ca, auth_bundle и т.д.
+    - extract:
+        key: ecdsa/name/vpn-server
+      rewrite:
+        - regexp:
+            source: "(.*)"
+            target: "vpn_$1" # Ключи станут vpn_ca, vpn_bundle и т.д.
+  target:
+    template:
+      engineVersion: v2
+      data:
+        auth-crt: "{{ .auth_bundle }}"
+        vpn-crt:  "{{ .vpn_bundle }}"
+        combined-ca: "{{ .auth_ca }}\n{{ .vpn_ca }}"
 ```
 
 ---

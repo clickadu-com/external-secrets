@@ -70,7 +70,7 @@ func (c *apiClientWrapper) GetSecretMap(ctx context.Context, ref esv1.ExternalSe
 		}
 		return map[string][]byte{ref.Property: val}, nil
 	}
-	return map[string][]byte{"bundle": data["bundle"], "key": data["key"]}, nil
+	return data, nil
 }
 
 func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecretDataRemoteRef) (map[string][]byte, error) {
