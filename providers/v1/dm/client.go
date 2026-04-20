@@ -45,7 +45,7 @@ func (c *apiClientWrapper) GetSecret(ctx context.Context, ref esv1.ExternalSecre
 		return nil, errors.New("property is required in data mode")
 	}
 
-	data, err := c.fetchData(ctx, ref, false)
+	data, err := c.fetchData(ctx, ref)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (c *apiClientWrapper) GetSecret(ctx context.Context, ref esv1.ExternalSecre
 }
 
 func (c *apiClientWrapper) GetSecretMap(ctx context.Context, ref esv1.ExternalSecretDataRemoteRef) (map[string][]byte, error) {
-	data, err := c.fetchData(ctx, ref, true)
+	data, err := c.fetchData(ctx, ref)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (c *apiClientWrapper) GetSecretMap(ctx context.Context, ref esv1.ExternalSe
 	return map[string][]byte{"bundle": data["bundle"], "key": data["key"]}, nil
 }
 
-func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecretDataRemoteRef, isMap bool) (map[string][]byte, error) {
+func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecretDataRemoteRef) (map[string][]byte, error) {
 	parts := strings.Split(ref.Key, "/")
 	if len(parts) != 3 {
 		return nil, fmt.Errorf("invalid key: %s", ref.Key)

@@ -83,3 +83,5 @@ tests/crds/*.yml
 .env.production.local
 .envrc
 .gitnexus
+# Added by code-review-graph
+.code-review-graph/
