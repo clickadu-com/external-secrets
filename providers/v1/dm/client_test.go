@@ -83,13 +83,12 @@ func TestCertificate_Provisioning_Only_In_DataFrom(t *testing.T) {
 
 	ctx := context.Background()
 
-	// 1. Попытка через GetSecret (data) -> Должно попытаться создать, но вернуть ошибку (не готов)
+	// 1. Попытка через GetSecret (data) без генератора -> Должно вернуть NoSecretErr
 	_, err := client.GetSecret(ctx, esv1.ExternalSecretDataRemoteRef{
 		Key:      "rsa/name/test.com",
 		Property: "bundle",
 	})
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "certificate is not ready (status: 0)")
+	assert.ErrorIs(t, err, esv1.NoSecretErr)
 
 	// 2. Попытка через GetSecretMap (dataFrom) -> Должно создать с SAN
 	_, err = client.GetSecretMap(ctx, esv1.ExternalSecretDataRemoteRef{

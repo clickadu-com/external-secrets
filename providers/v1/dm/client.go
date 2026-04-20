@@ -102,7 +102,7 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 	var cert *certificate.GetEntity
 	if err == nil && len(resp) > 0 {
 		cert = resp[0]
-	} else if filter == "name" {
+	} else if filter == "name" && ref.GeneratorMetaData != nil {
 		domains := []string{value}
 
 		var providerName *models.ProviderCertName
@@ -111,33 +111,31 @@ func (c *apiClientWrapper) fetchData(ctx context.Context, ref esv1.ExternalSecre
 		var ips []string
 		sync := true
 
-		if ref.GeneratorMetaData != nil {
-			if ref.GeneratorMetaData.ProviderName != "" {
-				pName := models.ProviderCertName(ref.GeneratorMetaData.ProviderName)
-				providerName = &pName
+		if ref.GeneratorMetaData.ProviderName != "" {
+			pName := models.ProviderCertName(ref.GeneratorMetaData.ProviderName)
+			providerName = &pName
+		}
+		if ref.GeneratorMetaData.ProviderType != "" {
+			pType := models.ProviderCertType(ref.GeneratorMetaData.ProviderType)
+			providerType = &pType
+		}
+		sync = ref.GeneratorMetaData.Sync
+		if ref.GeneratorMetaData.Subject != nil && ref.GeneratorMetaData.Subject.CommonName != "" {
+			subject = &pkix.Name{
+				CommonName: ref.GeneratorMetaData.Subject.CommonName,
 			}
-			if ref.GeneratorMetaData.ProviderType != "" {
-				pType := models.ProviderCertType(ref.GeneratorMetaData.ProviderType)
-				providerType = &pType
-			}
-			sync = ref.GeneratorMetaData.Sync
-			if ref.GeneratorMetaData.Subject != nil && ref.GeneratorMetaData.Subject.CommonName != "" {
-				subject = &pkix.Name{
-					CommonName: ref.GeneratorMetaData.Subject.CommonName,
-				}
-			}
-			ips = ref.GeneratorMetaData.IPAddresses
+		}
+		ips = ref.GeneratorMetaData.IPAddresses
 
-			// Fill SANs from DNSNames
-			for _, san := range ref.GeneratorMetaData.DNSNames {
-				if san == "" {
-					continue
-				}
-				if strings.Contains(san, ".") {
-					domains = append(domains, san)
-				} else {
-					domains = append(domains, san+"."+value)
-				}
+		// Fill SANs from DNSNames
+		for _, san := range ref.GeneratorMetaData.DNSNames {
+			if san == "" {
+				continue
+			}
+			if strings.Contains(san, ".") {
+				domains = append(domains, san)
+			} else {
+				domains = append(domains, san+"."+value)
 			}
 		}
 
