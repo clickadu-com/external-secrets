@@ -309,6 +309,42 @@ type ExternalSecretDataRemoteRef struct {
 	// Controls how ESO handles fetched secret data containing NUL bytes for this source.
 	// +kubebuilder:default="Ignore"
 	NullBytePolicy ExternalSecretNullBytePolicy `json:"nullBytePolicy,omitempty"`
+
+	// +optional
+	// GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+	GeneratorMetaData *ExternalSecretGeneratorPayload `json:"generator,omitempty"`
+}
+
+type ExternalSecretGeneratorPayload struct {
+	// +optional
+	// ProviderName specifies the provider name to use for the certificate.
+	ProviderName string `json:"providerName,omitempty"`
+
+	// +optional
+	// ProviderType specifies the provider type to use for the certificate.
+	ProviderType string `json:"providerType,omitempty"`
+
+	// +optional
+	// Sync specifies if the certificate should be synced immediately.
+	Sync bool `json:"sync,omitempty"`
+
+	// +optional
+	// Subject specifies the certificate subject information.
+	Subject *ExternalSecretGeneratorSubject `json:"subject,omitempty"`
+
+	// +optional
+	// IPAddresses specifies the IP addresses for the certificate.
+	IPAddresses []string `json:"ipAddresses,omitempty"`
+
+	// +optional
+	// DNSNames specifies the DNS names (SANs) for the certificate.
+	DNSNames []string `json:"dnsNames,omitempty"`
+}
+
+type ExternalSecretGeneratorSubject struct {
+	// +optional
+	// CommonName specifies the common name for the certificate.
+	CommonName string `json:"commonName,omitempty"`
 }
 
 // ExternalSecretMetadataPolicy defines policies for fetching metadata from provider secrets.
@@ -372,6 +408,10 @@ type ExternalSecretDataFromRemoteRef struct {
 	// When sourceRef points to a generator Extract or Find is not supported.
 	// The generator returns a static map of values
 	SourceRef *StoreGeneratorSourceRef `json:"sourceRef,omitempty"`
+
+	// +optional
+	// GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+	GeneratorMetaData *ExternalSecretGeneratorPayload `json:"generator,omitempty"`
 }
 
 // ExternalSecretRewrite defines how to rewrite secret data values before they are written to the Secret.

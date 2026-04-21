@@ -103,6 +103,36 @@ spec:
                                   - Base64URL
                                   - None
                                 type: string
+                              generator:
+                                description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                                properties:
+                                  dnsNames:
+                                    description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  ipAddresses:
+                                    description: IPAddresses specifies the IP addresses for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  providerName:
+                                    description: ProviderName specifies the provider name to use for the certificate.
+                                    type: string
+                                  providerType:
+                                    description: ProviderType specifies the provider type to use for the certificate.
+                                    type: string
+                                  subject:
+                                    description: Subject specifies the certificate subject information.
+                                    properties:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
+                                        type: string
+                                    type: object
+                                  sync:
+                                    description: Sync specifies if the certificate should be synced immediately.
+                                    type: boolean
+                                type: object
                               key:
                                 description: Key is the key used in the Provider, mandatory
                                 type: string
@@ -237,6 +267,36 @@ spec:
                                   - Base64URL
                                   - None
                                 type: string
+                              generator:
+                                description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                                properties:
+                                  dnsNames:
+                                    description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  ipAddresses:
+                                    description: IPAddresses specifies the IP addresses for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  providerName:
+                                    description: ProviderName specifies the provider name to use for the certificate.
+                                    type: string
+                                  providerType:
+                                    description: ProviderType specifies the provider type to use for the certificate.
+                                    type: string
+                                  subject:
+                                    description: Subject specifies the certificate subject information.
+                                    properties:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
+                                        type: string
+                                    type: object
+                                  sync:
+                                    description: Sync specifies if the certificate should be synced immediately.
+                                    type: boolean
+                                type: object
                               key:
                                 description: Key is the key used in the Provider, mandatory
                                 type: string
@@ -306,6 +366,36 @@ spec:
                                   type: string
                                 description: Find secrets based on tags.
                                 type: object
+                            type: object
+                          generator:
+                            description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                            properties:
+                              dnsNames:
+                                description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              ipAddresses:
+                                description: IPAddresses specifies the IP addresses for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              providerName:
+                                description: ProviderName specifies the provider name to use for the certificate.
+                                type: string
+                              providerType:
+                                description: ProviderType specifies the provider type to use for the certificate.
+                                type: string
+                              subject:
+                                description: Subject specifies the certificate subject information.
+                                properties:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
+                                    type: string
+                                type: object
+                              sync:
+                                description: Sync specifies if the certificate should be synced immediately.
+                                type: boolean
                             type: object
                           rewrite:
                             description: |-
@@ -930,6 +1020,36 @@ spec:
                                   - Base64URL
                                   - None
                                 type: string
+                              generator:
+                                description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                                properties:
+                                  dnsNames:
+                                    description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  ipAddresses:
+                                    description: IPAddresses specifies the IP addresses for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  providerName:
+                                    description: ProviderName specifies the provider name to use for the certificate.
+                                    type: string
+                                  providerType:
+                                    description: ProviderType specifies the provider type to use for the certificate.
+                                    type: string
+                                  subject:
+                                    description: Subject specifies the certificate subject information.
+                                    properties:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
+                                        type: string
+                                    type: object
+                                  sync:
+                                    description: Sync specifies if the certificate should be synced immediately.
+                                    type: boolean
+                                type: object
                               key:
                                 description: Key is the key used in the Provider, mandatory
                                 type: string
@@ -1053,6 +1173,36 @@ spec:
                                   - Base64URL
                                   - None
                                 type: string
+                              generator:
+                                description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                                properties:
+                                  dnsNames:
+                                    description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  ipAddresses:
+                                    description: IPAddresses specifies the IP addresses for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  providerName:
+                                    description: ProviderName specifies the provider name to use for the certificate.
+                                    type: string
+                                  providerType:
+                                    description: ProviderType specifies the provider type to use for the certificate.
+                                    type: string
+                                  subject:
+                                    description: Subject specifies the certificate subject information.
+                                    properties:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
+                                        type: string
+                                    type: object
+                                  sync:
+                                    description: Sync specifies if the certificate should be synced immediately.
+                                    type: boolean
+                                type: object
                               key:
                                 description: Key is the key used in the Provider, mandatory
                                 type: string
@@ -1093,6 +1243,36 @@ spec:
                                   - Base64URL
                                   - None
                                 type: string
+                              generator:
+                                description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                                properties:
+                                  dnsNames:
+                                    description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  ipAddresses:
+                                    description: IPAddresses specifies the IP addresses for the certificate.
+                                    items:
+                                      type: string
+                                    type: array
+                                  providerName:
+                                    description: ProviderName specifies the provider name to use for the certificate.
+                                    type: string
+                                  providerType:
+                                    description: ProviderType specifies the provider type to use for the certificate.
+                                    type: string
+                                  subject:
+                                    description: Subject specifies the certificate subject information.
+                                    properties:
+                                      commonName:
+                                        description: CommonName specifies the common name for the certificate.
+                                        type: string
+                                    type: object
+                                  sync:
+                                    description: Sync specifies if the certificate should be synced immediately.
+                                    type: boolean
+                                type: object
                               name:
                                 description: Finds secrets based on the name.
                                 properties:
@@ -1108,6 +1288,36 @@ spec:
                                   type: string
                                 description: Find secrets based on tags.
                                 type: object
+                            type: object
+                          generator:
+                            description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                            properties:
+                              dnsNames:
+                                description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              ipAddresses:
+                                description: IPAddresses specifies the IP addresses for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              providerName:
+                                description: ProviderName specifies the provider name to use for the certificate.
+                                type: string
+                              providerType:
+                                description: ProviderType specifies the provider type to use for the certificate.
+                                type: string
+                              subject:
+                                description: Subject specifies the certificate subject information.
+                                properties:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
+                                    type: string
+                                type: object
+                              sync:
+                                description: Sync specifies if the certificate should be synced immediately.
+                                type: boolean
                             type: object
                           rewrite:
                             description: |-
@@ -3823,6 +4033,53 @@ spec:
                         - clientId
                         - clientSecret
                         - tenant
+                      type: object
+                    dm:
+                      description: DM configures this store to sync certificates using Domain Manager provider.
+                      properties:
+                        auth:
+                          description: DMAuth contains a secretRef for credentials.
+                          properties:
+                            secretRef:
+                              description: DMAuthSecretRef holds secret references for Domain Manager API credentials.
+                              properties:
+                                apiToken:
+                                  description: APIToken is used as a Bearer token for API authentication.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - apiToken
+                              type: object
+                          type: object
+                        baseURL:
+                          description: BaseURL is the Domain Manager API base URL.
+                          minLength: 1
+                          type: string
+                      required:
+                        - auth
+                        - baseURL
                       type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider
@@ -9725,6 +9982,53 @@ spec:
                       required:
                         - auth
                         - host
+                      type: object
+                    dm:
+                      description: DM configures this store to sync certificates using Domain Manager provider.
+                      properties:
+                        auth:
+                          description: DMAuth contains a secretRef for credentials.
+                          properties:
+                            secretRef:
+                              description: DMAuthSecretRef holds secret references for Domain Manager API credentials.
+                              properties:
+                                apiToken:
+                                  description: APIToken is used as a Bearer token for API authentication.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - apiToken
+                              type: object
+                          type: object
+                        baseURL:
+                          description: BaseURL is the Domain Manager API base URL.
+                          minLength: 1
+                          type: string
+                      required:
+                        - auth
+                        - baseURL
                       type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider
@@ -12466,6 +12770,36 @@ spec:
                               - Base64URL
                               - None
                             type: string
+                          generator:
+                            description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                            properties:
+                              dnsNames:
+                                description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              ipAddresses:
+                                description: IPAddresses specifies the IP addresses for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              providerName:
+                                description: ProviderName specifies the provider name to use for the certificate.
+                                type: string
+                              providerType:
+                                description: ProviderType specifies the provider type to use for the certificate.
+                                type: string
+                              subject:
+                                description: Subject specifies the certificate subject information.
+                                properties:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
+                                    type: string
+                                type: object
+                              sync:
+                                description: Sync specifies if the certificate should be synced immediately.
+                                type: boolean
+                            type: object
                           key:
                             description: Key is the key used in the Provider, mandatory
                             type: string
@@ -12600,6 +12934,36 @@ spec:
                               - Base64URL
                               - None
                             type: string
+                          generator:
+                            description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                            properties:
+                              dnsNames:
+                                description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              ipAddresses:
+                                description: IPAddresses specifies the IP addresses for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              providerName:
+                                description: ProviderName specifies the provider name to use for the certificate.
+                                type: string
+                              providerType:
+                                description: ProviderType specifies the provider type to use for the certificate.
+                                type: string
+                              subject:
+                                description: Subject specifies the certificate subject information.
+                                properties:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
+                                    type: string
+                                type: object
+                              sync:
+                                description: Sync specifies if the certificate should be synced immediately.
+                                type: boolean
+                            type: object
                           key:
                             description: Key is the key used in the Provider, mandatory
                             type: string
@@ -12669,6 +13033,36 @@ spec:
                               type: string
                             description: Find secrets based on tags.
                             type: object
+                        type: object
+                      generator:
+                        description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                        properties:
+                          dnsNames:
+                            description: DNSNames specifies the DNS names (SANs) for the certificate.
+                            items:
+                              type: string
+                            type: array
+                          ipAddresses:
+                            description: IPAddresses specifies the IP addresses for the certificate.
+                            items:
+                              type: string
+                            type: array
+                          providerName:
+                            description: ProviderName specifies the provider name to use for the certificate.
+                            type: string
+                          providerType:
+                            description: ProviderType specifies the provider type to use for the certificate.
+                            type: string
+                          subject:
+                            description: Subject specifies the certificate subject information.
+                            properties:
+                              commonName:
+                                description: CommonName specifies the common name for the certificate.
+                                type: string
+                            type: object
+                          sync:
+                            description: Sync specifies if the certificate should be synced immediately.
+                            type: boolean
                         type: object
                       rewrite:
                         description: |-
@@ -13179,6 +13573,36 @@ spec:
                               - Base64URL
                               - None
                             type: string
+                          generator:
+                            description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                            properties:
+                              dnsNames:
+                                description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              ipAddresses:
+                                description: IPAddresses specifies the IP addresses for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              providerName:
+                                description: ProviderName specifies the provider name to use for the certificate.
+                                type: string
+                              providerType:
+                                description: ProviderType specifies the provider type to use for the certificate.
+                                type: string
+                              subject:
+                                description: Subject specifies the certificate subject information.
+                                properties:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
+                                    type: string
+                                type: object
+                              sync:
+                                description: Sync specifies if the certificate should be synced immediately.
+                                type: boolean
+                            type: object
                           key:
                             description: Key is the key used in the Provider, mandatory
                             type: string
@@ -13302,6 +13726,36 @@ spec:
                               - Base64URL
                               - None
                             type: string
+                          generator:
+                            description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                            properties:
+                              dnsNames:
+                                description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              ipAddresses:
+                                description: IPAddresses specifies the IP addresses for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              providerName:
+                                description: ProviderName specifies the provider name to use for the certificate.
+                                type: string
+                              providerType:
+                                description: ProviderType specifies the provider type to use for the certificate.
+                                type: string
+                              subject:
+                                description: Subject specifies the certificate subject information.
+                                properties:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
+                                    type: string
+                                type: object
+                              sync:
+                                description: Sync specifies if the certificate should be synced immediately.
+                                type: boolean
+                            type: object
                           key:
                             description: Key is the key used in the Provider, mandatory
                             type: string
@@ -13342,6 +13796,36 @@ spec:
                               - Base64URL
                               - None
                             type: string
+                          generator:
+                            description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                            properties:
+                              dnsNames:
+                                description: DNSNames specifies the DNS names (SANs) for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              ipAddresses:
+                                description: IPAddresses specifies the IP addresses for the certificate.
+                                items:
+                                  type: string
+                                type: array
+                              providerName:
+                                description: ProviderName specifies the provider name to use for the certificate.
+                                type: string
+                              providerType:
+                                description: ProviderType specifies the provider type to use for the certificate.
+                                type: string
+                              subject:
+                                description: Subject specifies the certificate subject information.
+                                properties:
+                                  commonName:
+                                    description: CommonName specifies the common name for the certificate.
+                                    type: string
+                                type: object
+                              sync:
+                                description: Sync specifies if the certificate should be synced immediately.
+                                type: boolean
+                            type: object
                           name:
                             description: Finds secrets based on the name.
                             properties:
@@ -13357,6 +13841,36 @@ spec:
                               type: string
                             description: Find secrets based on tags.
                             type: object
+                        type: object
+                      generator:
+                        description: GeneratorMetaData is used to define parameters for the automatic creation of certificates.
+                        properties:
+                          dnsNames:
+                            description: DNSNames specifies the DNS names (SANs) for the certificate.
+                            items:
+                              type: string
+                            type: array
+                          ipAddresses:
+                            description: IPAddresses specifies the IP addresses for the certificate.
+                            items:
+                              type: string
+                            type: array
+                          providerName:
+                            description: ProviderName specifies the provider name to use for the certificate.
+                            type: string
+                          providerType:
+                            description: ProviderType specifies the provider type to use for the certificate.
+                            type: string
+                          subject:
+                            description: Subject specifies the certificate subject information.
+                            properties:
+                              commonName:
+                                description: CommonName specifies the common name for the certificate.
+                                type: string
+                            type: object
+                          sync:
+                            description: Sync specifies if the certificate should be synced immediately.
+                            type: boolean
                         type: object
                       rewrite:
                         description: |-
@@ -15927,6 +16441,53 @@ spec:
                         - clientId
                         - clientSecret
                         - tenant
+                      type: object
+                    dm:
+                      description: DM configures this store to sync certificates using Domain Manager provider.
+                      properties:
+                        auth:
+                          description: DMAuth contains a secretRef for credentials.
+                          properties:
+                            secretRef:
+                              description: DMAuthSecretRef holds secret references for Domain Manager API credentials.
+                              properties:
+                                apiToken:
+                                  description: APIToken is used as a Bearer token for API authentication.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - apiToken
+                              type: object
+                          type: object
+                        baseURL:
+                          description: BaseURL is the Domain Manager API base URL.
+                          minLength: 1
+                          type: string
+                      required:
+                        - auth
+                        - baseURL
                       type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider
@@ -21829,6 +22390,53 @@ spec:
                       required:
                         - auth
                         - host
+                      type: object
+                    dm:
+                      description: DM configures this store to sync certificates using Domain Manager provider.
+                      properties:
+                        auth:
+                          description: DMAuth contains a secretRef for credentials.
+                          properties:
+                            secretRef:
+                              description: DMAuthSecretRef holds secret references for Domain Manager API credentials.
+                              properties:
+                                apiToken:
+                                  description: APIToken is used as a Bearer token for API authentication.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - apiToken
+                              type: object
+                          type: object
+                        baseURL:
+                          description: BaseURL is the Domain Manager API base URL.
+                          minLength: 1
+                          type: string
+                      required:
+                        - auth
+                        - baseURL
                       type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider

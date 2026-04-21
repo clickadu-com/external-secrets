@@ -43,7 +43,7 @@ bitwarden-sdk-server:
 revisionHistoryLimit: 10
 
 image:
-  repository: ghcr.io/external-secrets/external-secrets
+  repository: nexus.adsrv.wtf/apps/external-secrets
   pullPolicy: IfNotPresent
   # -- The image tag to use. The default is the chart appVersion.
   tag: ""
@@ -449,7 +449,7 @@ webhook:
   # @schema type: [boolean, null]
   hostUsers:
   image:
-    repository: ghcr.io/external-secrets/external-secrets
+    repository: nexus.adsrv.wtf/apps/external-secrets
     pullPolicy: IfNotPresent
     # -- The image tag to use. The default is the chart appVersion.
     tag: ""
@@ -638,7 +638,7 @@ certController:
   revisionHistoryLimit: 10
 
   image:
-    repository: ghcr.io/external-secrets/external-secrets
+    repository: nexus.adsrv.wtf/apps/external-secrets
     pullPolicy: IfNotPresent
     tag: ""
     flavour: ""
