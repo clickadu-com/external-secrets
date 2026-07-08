@@ -292,6 +292,37 @@ SecretsManager
 </tr>
 <tr>
 <td>
+<code>sessionTagsPolicy</code></br>
+<em>
+<a href="#external-secrets.io/v1.SessionTagsPolicy">
+SessionTagsPolicy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>SessionTagsPolicy controls whether and how STS session tags are added when assuming roles.
+None (default): no tags are added.
+Simple: automatically adds esoNamespace (from the ExternalSecret), esoStoreName, and esoStoreKind tags.
+Custom: adds esoNamespace, esoStoreName, and esoStoreKind plus any tags defined in CustomSessionTags.
+Note: the IAM role must have sts:TagSession permission when using Simple or Custom.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>customSessionTags</code></br>
+<em>
+map[string]string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>CustomSessionTags defines additional STS session tags to include when SessionTagsPolicy is Custom.
+These are merged with the automatically injected esoNamespace, esoStoreName, and esoStoreKind tags.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>prefix</code></br>
 <em>
 string
@@ -976,7 +1007,8 @@ AzureAuthType
 <p>Auth type defines how to authenticate to the keyvault service.
 Valid values are:
 - &ldquo;ServicePrincipal&rdquo; (default): Using a service principal (tenantId, clientId, clientSecret)
-- &ldquo;ManagedIdentity&rdquo;: Using Managed Identity assigned to the pod (see aad-pod-identity)</p>
+- &ldquo;ManagedIdentity&rdquo;: Using Managed Identity assigned to the pod (see aad-pod-identity)
+- &ldquo;WorkloadIdentity&rdquo;: Using a Kubernetes ServiceAccount federated with Entra ID</p>
 </td>
 </tr>
 <tr>
@@ -1550,6 +1582,226 @@ int
 </tr>
 </tbody>
 </table>
+<h3 id="external-secrets.io/v1.BeyondtrustWorkloadCredentialsAuth">BeyondtrustWorkloadCredentialsAuth
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsProvider">BeyondtrustWorkloadCredentialsProvider</a>)
+</p>
+<p>
+<p>BeyondtrustWorkloadCredentialsAuth defines the authentication method for the BeyondTrust Workload Credentials provider.
+Currently supports API key authentication via Kubernetes secret reference.
+For authentication documentation, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api#authentication">https://docs.beyondtrust.com/bt-docs/docs/secrets-api#authentication</a></p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>apikey</code></br>
+<em>
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsAuthSecretRef">
+BeyondtrustWorkloadCredentialsAuthSecretRef
+</a>
+</em>
+</td>
+<td>
+<p>APIKey configures API token authentication for BeyondTrust Workload Credentials.
+The token is retrieved from a Kubernetes secret and used as a Bearer token for API requests.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1.BeyondtrustWorkloadCredentialsAuthSecretRef">BeyondtrustWorkloadCredentialsAuthSecretRef
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsAuth">BeyondtrustWorkloadCredentialsAuth</a>)
+</p>
+<p>
+<p>BeyondtrustWorkloadCredentialsAuthSecretRef defines a reference to a secret containing credentials for the BeyondTrust Workload Credentials provider.
+The nested structure supports multiple authentication methods (currently only API token is supported).
+For more information on authentication, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api#authentication">https://docs.beyondtrust.com/bt-docs/docs/secrets-api#authentication</a></p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>token</code></br>
+<em>
+<a href="https://pkg.go.dev/github.com/external-secrets/external-secrets/apis/meta/v1#SecretKeySelector">
+External Secrets meta/v1.SecretKeySelector
+</a>
+</em>
+</td>
+<td>
+<p>Token references the Kubernetes secret containing the BeyondTrust Workload Credentials API token.
+The secret should contain the API key used to authenticate with BeyondTrust Workload Credentials.
+Create an API token in your BeyondTrust Workload Credentials console and store it in a Kubernetes secret.
+For details on creating API tokens, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api#authentication">https://docs.beyondtrust.com/bt-docs/docs/secrets-api#authentication</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1.BeyondtrustWorkloadCredentialsProvider">BeyondtrustWorkloadCredentialsProvider
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.SecretStoreProvider">SecretStoreProvider</a>, 
+<a href="#generators.external-secrets.io/v1alpha1.BeyondtrustWorkloadCredentialsDynamicSecretSpec">BeyondtrustWorkloadCredentialsDynamicSecretSpec</a>)
+</p>
+<p>
+<p>BeyondtrustWorkloadCredentialsProvider configures a store to sync secrets using the BeyondTrust Workload Credentials provider.
+BeyondTrust Workload Credentials provides secure storage for static secrets and dynamic credential generation.
+This provider supports reading secrets and generating dynamic credentials (e.g., temporary AWS credentials).
+For complete documentation, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api">https://docs.beyondtrust.com/bt-docs/docs/secrets-api</a></p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>auth</code></br>
+<em>
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsAuth">
+BeyondtrustWorkloadCredentialsAuth
+</a>
+</em>
+</td>
+<td>
+<p>Auth configures how the Operator authenticates with the BeyondTrust Workload Credentials API.
+Currently supports API key authentication via Kubernetes secret reference.
+For authentication setup, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api#authentication">https://docs.beyondtrust.com/bt-docs/docs/secrets-api#authentication</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>server</code></br>
+<em>
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsServer">
+BeyondtrustWorkloadCredentialsServer
+</a>
+</em>
+</td>
+<td>
+<p>Server configures the BeyondTrust Workload Credentials server connection details.
+Includes the API URL and Site ID for your BeyondTrust instance.
+For API reference, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api">https://docs.beyondtrust.com/bt-docs/docs/secrets-api</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>folderPath</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>FolderPath specifies the default folder path for secret retrieval.
+Secrets will be fetched from this folder unless overridden in the ExternalSecret spec.
+Example: &ldquo;production/database&rdquo; or &ldquo;dev/api-keys&rdquo;
+Leave empty to retrieve secrets from the root folder.
+For folder organization, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api#folders">https://docs.beyondtrust.com/bt-docs/docs/secrets-api#folders</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>caBundle</code></br>
+<em>
+[]byte
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>CABundle is a base64-encoded CA certificate used to validate the BeyondTrust Workload Credentials API TLS certificate.
+Use this when your BeyondTrust instance uses a self-signed certificate or internal CA.
+If not set, the system&rsquo;s trusted root certificates are used.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>caProvider</code></br>
+<em>
+<a href="#external-secrets.io/v1.CAProvider">
+CAProvider
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>CAProvider points to a Secret or ConfigMap containing a PEM-encoded CA certificate.
+This is used to validate the BeyondTrust Workload Credentials API TLS certificate.
+Use this as an alternative to CABundle when you want to reference an existing Kubernetes resource.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1.BeyondtrustWorkloadCredentialsServer">BeyondtrustWorkloadCredentialsServer
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsProvider">BeyondtrustWorkloadCredentialsProvider</a>)
+</p>
+<p>
+<p>BeyondtrustWorkloadCredentialsServer defines connection configuration for BeyondTrust Workload Credentials.
+For API reference documentation, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api">https://docs.beyondtrust.com/bt-docs/docs/secrets-api</a></p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>apiUrl</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>APIURL is the base URL of your BeyondTrust Workload Credentials API server.
+This should be the full URL to your BeyondTrust instance.
+Example: <a href="https://api.beyondtrust.io/siie">https://api.beyondtrust.io/siie</a>
+For more information, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api#base-url">https://docs.beyondtrust.com/bt-docs/docs/secrets-api#base-url</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>siteId</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>SiteID is your BeyondTrust Workload Credentials site identifier (UUID format).
+This identifier is unique to your BeyondTrust Workload Credentials instance.
+You can find your Site ID in the BeyondTrust Workload Credentials admin console.
+Example: a1b2c3d4-e5f6-4890-abcd-ef1234567890
+For more information, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api">https://docs.beyondtrust.com/bt-docs/docs/secrets-api</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="external-secrets.io/v1.BitwardenSecretsManagerAuth">BitwardenSecretsManagerAuth
 </h3>
 <p>
@@ -1769,12 +2021,15 @@ string
 <p>
 (<em>Appears on:</em>
 <a href="#external-secrets.io/v1.AkeylessProvider">AkeylessProvider</a>, 
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsProvider">BeyondtrustWorkloadCredentialsProvider</a>, 
 <a href="#external-secrets.io/v1.BitwardenSecretsManagerProvider">BitwardenSecretsManagerProvider</a>, 
 <a href="#external-secrets.io/v1.ConjurProvider">ConjurProvider</a>, 
 <a href="#external-secrets.io/v1.GitlabProvider">GitlabProvider</a>, 
 <a href="#external-secrets.io/v1.InfisicalProvider">InfisicalProvider</a>, 
 <a href="#external-secrets.io/v1.KubernetesServer">KubernetesServer</a>, 
+<a href="#external-secrets.io/v1.OpenBaoProvider">OpenBaoProvider</a>, 
 <a href="#external-secrets.io/v1.OvhClientMTLS">OvhClientMTLS</a>, 
+<a href="#external-secrets.io/v1.PassboltProvider">PassboltProvider</a>, 
 <a href="#external-secrets.io/v1.SecretServerProvider">SecretServerProvider</a>, 
 <a href="#external-secrets.io/v1.VaultProvider">VaultProvider</a>)
 </p>
@@ -3243,6 +3498,19 @@ string
 </tr>
 <tr>
 <td>
+<code>vault</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Vault is the name or UUID of the vault to fetch secrets from.
+When omitted, the vault must be specified in the secret key using the legacy format &ldquo;<vault-id>/<entry-id>&rdquo;.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>insecure</code></br>
 <em>
 bool
@@ -3721,6 +3989,21 @@ May be set to &ldquo;0s&rdquo; to fetch and create it once. Defaults to 1h0m0s.<
 </tr>
 <tr>
 <td>
+<code>syncWindows</code></br>
+<em>
+<a href="#external-secrets.io/v1.ExternalSecretSyncWindows">
+ExternalSecretSyncWindows
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>SyncWindows optionally restricts when periodic refreshes may occur.
+Evaluated in UTC, only for Periodic refresh policy (or when refreshPolicy is unset).</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>data</code></br>
 <em>
 <a href="#external-secrets.io/v1.ExternalSecretData">
@@ -4102,7 +4385,8 @@ ExternalSecretNullBytePolicy
 <p>
 (<em>Appears on:</em>
 <a href="#external-secrets.io/v1.ExternalSecretDataRemoteRef">ExternalSecretDataRemoteRef</a>, 
-<a href="#external-secrets.io/v1.ExternalSecretFind">ExternalSecretFind</a>)
+<a href="#external-secrets.io/v1.ExternalSecretFind">ExternalSecretFind</a>, 
+<a href="#external-secrets.io/v1.TemplateFrom">TemplateFrom</a>)
 </p>
 <p>
 <p>ExternalSecretDecodingStrategy defines strategies for decoding secret values.</p>
@@ -4755,6 +5039,21 @@ May be set to &ldquo;0s&rdquo; to fetch and create it once. Defaults to 1h0m0s.<
 </tr>
 <tr>
 <td>
+<code>syncWindows</code></br>
+<em>
+<a href="#external-secrets.io/v1.ExternalSecretSyncWindows">
+ExternalSecretSyncWindows
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>SyncWindows optionally restricts when periodic refreshes may occur.
+Evaluated in UTC, only for Periodic refresh policy (or when refreshPolicy is unset).</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>data</code></br>
 <em>
 <a href="#external-secrets.io/v1.ExternalSecretData">
@@ -4928,6 +5227,131 @@ Kubernetes meta/v1.Time
 </td>
 <td>
 <em>(Optional)</em>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1.ExternalSecretSyncWindowEntry">ExternalSecretSyncWindowEntry
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.ExternalSecretSyncWindows">ExternalSecretSyncWindows</a>)
+</p>
+<p>
+<p>ExternalSecretSyncWindowEntry defines a single cron-schedule + duration pair
+within a SyncWindows block.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>schedule</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Schedule is a standard 5-field cron expression evaluated in UTC, or a
+named shorthand such as @daily or @every 1h. It marks the start time of
+each window occurrence.
+Example: &ldquo;0 22 * * 1-5&rdquo; opens a window every weekday at 22:00 UTC.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>duration</code></br>
+<em>
+<a href="https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1#Duration">
+Kubernetes meta/v1.Duration
+</a>
+</em>
+</td>
+<td>
+<p>Duration specifies how long the window stays open after each Schedule
+firing. Example: &ldquo;8h&rdquo;.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1.ExternalSecretSyncWindowKind">ExternalSecretSyncWindowKind
+(<code>string</code> alias)</p></h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.ExternalSecretSyncWindows">ExternalSecretSyncWindows</a>)
+</p>
+<p>
+<p>ExternalSecretSyncWindowKind defines whether a SyncWindow permits or
+blocks periodic refreshes.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;allow&#34;</p></td>
+<td><p>SyncWindowAllow allows periodic refreshes only while at least one window
+in the list is active. Refreshes are blocked at all other times.</p>
+</td>
+</tr><tr><td><p>&#34;deny&#34;</p></td>
+<td><p>SyncWindowDeny blocks periodic refreshes while any window in the list is
+active. Refreshes proceed normally at all other times.</p>
+</td>
+</tr></tbody>
+</table>
+<h3 id="external-secrets.io/v1.ExternalSecretSyncWindows">ExternalSecretSyncWindows
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.ExternalSecretSpec">ExternalSecretSpec</a>)
+</p>
+<p>
+<p>ExternalSecretSyncWindows optionally restricts when periodic syncs may occur.
+All windows in the list share the same Kind.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>kind</code></br>
+<em>
+<a href="#external-secrets.io/v1.ExternalSecretSyncWindowKind">
+ExternalSecretSyncWindowKind
+</a>
+</em>
+</td>
+<td>
+<p>Kind applies to every window in the list.
+&ldquo;allow&rdquo; &ndash; syncs are permitted only while at least one window is active;
+all other times are blocked.
+&ldquo;deny&rdquo;  &ndash; syncs are blocked while any window is active;
+all other times are permitted.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>windows</code></br>
+<em>
+<a href="#external-secrets.io/v1.ExternalSecretSyncWindowEntry">
+[]ExternalSecretSyncWindowEntry
+</a>
+</em>
+</td>
+<td>
+<p>Windows is the list of schedule+duration pairs.</p>
 </td>
 </tr>
 </tbody>
@@ -5756,6 +6180,22 @@ string
 <p>externalTokenEndpoint is the endpoint explicitly set up to provide tokens, which will be matched against the
 credential_source.url in the provided credConfig. This field is merely to double-check the external token source
 URL is having the expected value.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>gcpServiceAccountEmail</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>GCPServiceAccountEmail is the email of the Google Cloud service account to impersonate
+after Workload Identity Federation. Use this to grant access through the service account&rsquo;s
+IAM bindings (for example roles/secretmanager.secretAccessor). When set, it overrides
+service_account_impersonation_url in the external account JSON from credConfig;
+when serviceAccountRef is set, it also overrides the &ldquo;iam.gke.io/gcp-service-account&rdquo; annotation
+on that ServiceAccount.</p>
 </td>
 </tr>
 </tbody>
@@ -6778,6 +7218,16 @@ string
 <td>
 </td>
 </tr>
+<tr>
+<td>
+<code>getByTitleFallback</code></br>
+<em>
+bool
+</em>
+</td>
+<td>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="external-secrets.io/v1.KubernetesAuth">KubernetesAuth
@@ -7131,6 +7581,18 @@ string
 </td>
 <td>
 <p>ProjectSlug is the required slug identifier for the project.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>organizationSlug</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>OrganizationSlug is the optional slug that identifies the organization that will be used
+during authentication. Useful for sub-organization setups</p>
 </td>
 </tr>
 <tr>
@@ -8006,6 +8468,366 @@ cache: {} is a valid option to set.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="external-secrets.io/v1.OpenBaoAppRole">OpenBaoAppRole
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.OpenBaoAuth">OpenBaoAuth</a>)
+</p>
+<p>
+<p>OpenBaoAppRole authenticates with OpenBao using the <a href="https://openbao.org/docs/auth/approle/">App Role auth
+mechanism</a>, with the role and secret stored in a Kubernetes Secret resource.
+The role ID has to be specified either inline via <code>roleId</code> or by referencing
+a secret via <code>roleRef</code>.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>path</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Path where the App Role authentication backend is mounted
+in OpenBao, e.g: &ldquo;approle&rdquo;</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>roleId</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RoleID configured in the App Role authentication backend when setting
+up the authentication backend in OpenBao.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>roleRef</code></br>
+<em>
+<a href="https://pkg.go.dev/github.com/external-secrets/external-secrets/apis/meta/v1#SecretKeySelector">
+External Secrets meta/v1.SecretKeySelector
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Reference to a key in a Secret that contains the App Role ID used
+to authenticate with OpenBao.
+The <code>key</code> field must be specified and denotes which entry within the Secret
+resource is used as the app role id.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>secretRef</code></br>
+<em>
+<a href="https://pkg.go.dev/github.com/external-secrets/external-secrets/apis/meta/v1#SecretKeySelector">
+External Secrets meta/v1.SecretKeySelector
+</a>
+</em>
+</td>
+<td>
+<p>Reference to a key in a Secret that contains the App Role secret used
+to authenticate with OpenBao.
+The <code>key</code> field must be specified and denotes which entry within the Secret
+resource is used as the app role secret.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1.OpenBaoAuth">OpenBaoAuth
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.OpenBaoProvider">OpenBaoProvider</a>)
+</p>
+<p>
+<p>OpenBaoAuth is the configuration used to authenticate with an OpenBao server.
+Currently the following authentication methods are supported: <a href="https://openbao.org/docs/auth/approle/">AppRole</a>,
+<a href="https://openbao.org/docs/auth/token/">Token</a> and <a href="https://openbao.org/docs/auth/userpass/">UserPass</a></p>
+<p>Additional authentication methods are planned for future releases.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>appRole</code></br>
+<em>
+<a href="#external-secrets.io/v1.OpenBaoAppRole">
+OpenBaoAppRole
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>AppRole authenticates with OpenBao using the <a href="https://openbao.org/docs/auth/approle/">App Role auth mechanism</a>,
+with the role and secret stored in a Kubernetes Secret resource.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>namespace</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Name of the <a href="https://openbao.org/docs/concepts/namespaces/">OpenBao Namespace</a> to authenticate to. This can be different
+than the namespace your secret is in. Namespaces is a set of features
+within OpenBao that allows OpenBao environments to support secure
+multi-tenancy. e.g: &ldquo;ns1&rdquo;. This will default to OpenBao.Namespace field
+if set, or empty otherwise</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>tokenSecretRef</code></br>
+<em>
+<a href="https://pkg.go.dev/github.com/external-secrets/external-secrets/apis/meta/v1#SecretKeySelector">
+External Secrets meta/v1.SecretKeySelector
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>TokenSecretRef authenticates with OpenBao by presenting a token.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>userPass</code></br>
+<em>
+<a href="#external-secrets.io/v1.OpenBaoUserPassAuth">
+OpenBaoUserPassAuth
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>UserPass authenticates with OpenBao by passing a username/password pair</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1.OpenBaoKVStoreVersion">OpenBaoKVStoreVersion
+(<code>string</code> alias)</p></h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.OpenBaoProvider">OpenBaoProvider</a>)
+</p>
+<p>
+<p>OpenBaoKVStoreVersion represents the version of the OpenBao KV secret engine.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;v1&#34;</p></td>
+<td></td>
+</tr><tr><td><p>&#34;v2&#34;</p></td>
+<td></td>
+</tr></tbody>
+</table>
+<h3 id="external-secrets.io/v1.OpenBaoProvider">OpenBaoProvider
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.SecretStoreProvider">SecretStoreProvider</a>)
+</p>
+<p>
+<p>OpenBaoProvider configures a store to sync secrets using an OpenBao KV backend.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>auth</code></br>
+<em>
+<a href="#external-secrets.io/v1.OpenBaoAuth">
+OpenBaoAuth
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Auth configures how secret-manager authenticates with the OpenBao server.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>caBundle</code></br>
+<em>
+[]byte
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>PEM encoded CA bundle used to validate the OpenBao server certificate. If
+this and <code>caProvider</code> are not set the system root certificates are used
+to validate the TLS connection.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>caProvider</code></br>
+<em>
+<a href="#external-secrets.io/v1.CAProvider">
+CAProvider
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>The provider for the CA bundle to use to validate OpenBao server
+certificate. If this and <code>caBundle</code> are not set the system root
+certificates are used to validate the TLS connection.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>namespace</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Name of the <a href="https://openbao.org/docs/concepts/namespaces/">OpenBao Namespace</a>. Namespaces is a set of features within
+OpenBao that allows OpenBao environments to support secure multi-tenancy.
+e.g: &ldquo;ns1&rdquo;.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>server</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Server is the connection address for the OpenBao server, e.g: <code>https://openbao.example.com:8200</code>.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>path</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Path is the mount path of the OpenBao KV backend endpoint, e.g:
+&ldquo;secret&rdquo;. The v2 KV secret engine version specific &ldquo;/data&rdquo; path suffix
+for fetching secrets from OpenBao is optional and will be appended
+if not present in specified path.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>version</code></br>
+<em>
+<a href="#external-secrets.io/v1.OpenBaoKVStoreVersion">
+OpenBaoKVStoreVersion
+</a>
+</em>
+</td>
+<td>
+<p>Version is the OpenBao KV secret engine version. This can be either &ldquo;v1&rdquo; or
+&ldquo;v2&rdquo;. Version defaults to &ldquo;v2&rdquo;.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1.OpenBaoUserPassAuth">OpenBaoUserPassAuth
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.OpenBaoAuth">OpenBaoAuth</a>)
+</p>
+<p>
+<p>OpenBaoUserPassAuth authenticates with OpenBao using <a href="https://openbao.org/docs/auth/userpass/">UserPass authentication
+method</a>, with the username and password stored in a Kubernetes Secret
+resource.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>path</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Path where the UserPassword authentication backend is mounted
+in OpenBao, e.g: &ldquo;userpass&rdquo;</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>username</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Username is a username used to authenticate using the <a href="https://openbao.org/docs/auth/userpass/">UserPass
+authentication method</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>secretRef</code></br>
+<em>
+<a href="https://pkg.go.dev/github.com/external-secrets/external-secrets/apis/meta/v1#SecretKeySelector">
+External Secrets meta/v1.SecretKeySelector
+</a>
+</em>
+</td>
+<td>
+<p>SecretRef to a key in a Secret resource containing password for the user
+used to authenticate with OpenBao using the <a href="https://openbao.org/docs/auth/userpass/">UserPass authentication
+method</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="external-secrets.io/v1.OracleAuth">OracleAuth
 </h3>
 <p>
@@ -8552,6 +9374,34 @@ string
 <p>Host defines the Passbolt Server to connect to</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>caBundle</code></br>
+<em>
+[]byte
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>PEM encoded CA bundle used to validate Passbolt server certificate. Only used
+if the Host URL is using HTTPS protocol. If not set the system root certificates
+are used to validate the TLS connection.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>caProvider</code></br>
+<em>
+<a href="#external-secrets.io/v1.CAProvider">
+CAProvider
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>The provider for the CA bundle to use to validate Passbolt server certificate.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="external-secrets.io/v1.PasswordDepotAuth">PasswordDepotAuth
@@ -8783,6 +9633,110 @@ string
 <p>
 <p>Provider is a common interface for interacting with secret backends.</p>
 </p>
+<h3 id="external-secrets.io/v1.PulumiAuth">PulumiAuth
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.PulumiProvider">PulumiProvider</a>)
+</p>
+<p>
+<p>PulumiAuth configures authentication with the Pulumi API.
+Exactly one of accessToken or oidcConfig must be specified.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>accessToken</code></br>
+<em>
+<a href="#external-secrets.io/v1.PulumiProviderSecretRef">
+PulumiProviderSecretRef
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>AccessToken authenticates using a Pulumi access token stored in a Kubernetes Secret.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>oidcConfig</code></br>
+<em>
+<a href="#external-secrets.io/v1.PulumiOIDCAuth">
+PulumiOIDCAuth
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>OIDCConfig authenticates using Kubernetes ServiceAccount tokens via OIDC.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1.PulumiOIDCAuth">PulumiOIDCAuth
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.PulumiAuth">PulumiAuth</a>)
+</p>
+<p>
+<p>PulumiOIDCAuth configures OIDC authentication with Pulumi using Kubernetes ServiceAccount tokens.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>organization</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Organization is the name of the Pulumi organization configured for OIDC authentication.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>serviceAccountRef</code></br>
+<em>
+<a href="https://pkg.go.dev/github.com/external-secrets/external-secrets/apis/meta/v1#ServiceAccountSelector">
+External Secrets meta/v1.ServiceAccountSelector
+</a>
+</em>
+</td>
+<td>
+<p>ServiceAccountRef specifies the Kubernetes ServiceAccount to use for authentication.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>expirationSeconds</code></br>
+<em>
+int64
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>ExpirationSeconds sets the token validity duration for service account and OIDC token.
+Defaults to 10 minutes.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="external-secrets.io/v1.PulumiProvider">PulumiProvider
 </h3>
 <p>
@@ -8813,15 +9767,17 @@ string
 </tr>
 <tr>
 <td>
-<code>accessToken</code></br>
+<code>auth</code></br>
 <em>
-<a href="#external-secrets.io/v1.PulumiProviderSecretRef">
-PulumiProviderSecretRef
+<a href="#external-secrets.io/v1.PulumiAuth">
+PulumiAuth
 </a>
 </em>
 </td>
 <td>
-<p>AccessToken is the access tokens to sign in to the Pulumi Cloud Console.</p>
+<em>(Optional)</em>
+<p>Auth configures how the Operator authenticates with the Pulumi API.
+Either auth or the deprecated accessToken field must be specified.</p>
 </td>
 </tr>
 <tr>
@@ -8861,12 +9817,28 @@ and other Pulumi ESC environments.
 To create a new environment, visit <a href="https://www.pulumi.com/docs/esc/environments/">https://www.pulumi.com/docs/esc/environments/</a> for more information.</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>accessToken</code></br>
+<em>
+<a href="#external-secrets.io/v1.PulumiProviderSecretRef">
+PulumiProviderSecretRef
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>AccessToken is the access tokens to sign in to the Pulumi Cloud Console.</p>
+<p>Deprecated: Use auth.accessToken instead.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="external-secrets.io/v1.PulumiProviderSecretRef">PulumiProviderSecretRef
 </h3>
 <p>
 (<em>Appears on:</em>
+<a href="#external-secrets.io/v1.PulumiAuth">PulumiAuth</a>, 
 <a href="#external-secrets.io/v1.PulumiProvider">PulumiProvider</a>)
 </p>
 <p>
@@ -9895,6 +10867,20 @@ BeyondtrustProvider
 </tr>
 <tr>
 <td>
+<code>beyondtrustworkloadcredentials</code></br>
+<em>
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsProvider">
+BeyondtrustWorkloadCredentialsProvider
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>BeyondtrustWorkloadCredentials configures this store to sync secrets using the BeyondTrust Workload Credentials provider.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>cloudrusm</code></br>
 <em>
 <a href="#external-secrets.io/v1.CloudruSMProvider">
@@ -9963,6 +10949,20 @@ NebiusMysteryboxProvider
 <p>NebiusMysterybox configures this store to sync secrets using NebiusMysterybox provider</p>
 </td>
 </tr>
+<tr>
+<td>
+<code>openBao</code></br>
+<em>
+<a href="#external-secrets.io/v1.OpenBaoProvider">
+OpenBaoProvider
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>OpenBao configures this store to sync secrets using the OpenBao provider.</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3 id="external-secrets.io/v1.SecretStoreRef">SecretStoreRef
@@ -10015,6 +11015,7 @@ Defaults to <code>SecretStore</code></p>
 <p>
 (<em>Appears on:</em>
 <a href="#external-secrets.io/v1.SecretStoreSpec">SecretStoreSpec</a>, 
+<a href="#generators.external-secrets.io/v1alpha1.BeyondtrustWorkloadCredentialsDynamicSecretSpec">BeyondtrustWorkloadCredentialsDynamicSecretSpec</a>, 
 <a href="#generators.external-secrets.io/v1alpha1.VaultDynamicSecretSpec">VaultDynamicSecretSpec</a>)
 </p>
 <p>
@@ -10474,6 +11475,35 @@ bool
 </tr>
 </tbody>
 </table>
+<h3 id="external-secrets.io/v1.SessionTagsPolicy">SessionTagsPolicy
+(<code>string</code> alias)</p></h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1.AWSProvider">AWSProvider</a>)
+</p>
+<p>
+<p>SessionTagsPolicy defines how STS session tags are handled.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;Custom&#34;</p></td>
+<td><p>SessionTagsPolicyCustom adds the tags defined in CustomSessionTags in addition to
+the esoNamespace, esoStoreName, and esoStoreKind tags.</p>
+</td>
+</tr><tr><td><p>&#34;None&#34;</p></td>
+<td><p>SessionTagsPolicyNone is the default behavior - no session tags are added.</p>
+</td>
+</tr><tr><td><p>&#34;Simple&#34;</p></td>
+<td><p>SessionTagsPolicySimple automatically adds esoNamespace, esoStoreName, and esoStoreKind
+session tags.</p>
+</td>
+</tr></tbody>
+</table>
 <h3 id="external-secrets.io/v1.StoreGeneratorSourceRef">StoreGeneratorSourceRef
 </h3>
 <p>
@@ -10695,6 +11725,20 @@ string
 </td>
 <td>
 <em>(Optional)</em>
+</td>
+</tr>
+<tr>
+<td>
+<code>valuesDecodingStrategy</code></br>
+<em>
+<a href="#external-secrets.io/v1.ExternalSecretDecodingStrategy">
+ExternalSecretDecodingStrategy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Used to define a decoding Strategy for the rendered template values.</p>
 </td>
 </tr>
 </tbody>
@@ -25306,6 +26350,167 @@ that should be used when authenticating with WorkloadIdentity.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="generators.external-secrets.io/v1alpha1.BeyondtrustWorkloadCredentialsDynamicSecret">BeyondtrustWorkloadCredentialsDynamicSecret
+</h3>
+<p>
+<p>BeyondtrustWorkloadCredentialsDynamicSecret represents a generator that requests dynamic credentials from BeyondTrust Workload Credentials.
+This generator calls the BeyondTrust Workload Credentials API to generate fresh, temporary credentials
+(such as AWS STS credentials) each time an ExternalSecret is refreshed.
+Dynamic secret definitions must be created in BeyondTrust Workload Credentials before they can be referenced.
+For complete documentation, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api">https://docs.beyondtrust.com/bt-docs/docs/secrets-api</a></p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>metadata</code></br>
+<em>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#objectmeta-v1-meta">
+Kubernetes meta/v1.ObjectMeta
+</a>
+</em>
+</td>
+<td>
+Refer to the Kubernetes API documentation for the fields of the
+<code>metadata</code> field.
+</td>
+</tr>
+<tr>
+<td>
+<code>spec</code></br>
+<em>
+<a href="#generators.external-secrets.io/v1alpha1.BeyondtrustWorkloadCredentialsDynamicSecretSpec">
+BeyondtrustWorkloadCredentialsDynamicSecretSpec
+</a>
+</em>
+</td>
+<td>
+<br/>
+<br/>
+<table>
+<tr>
+<td>
+<code>controller</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Controller selects the controller that should handle this generator.
+Leave empty to use the default controller.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>provider</code></br>
+<em>
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsProvider">
+BeyondtrustWorkloadCredentialsProvider
+</a>
+</em>
+</td>
+<td>
+<p>Provider contains the BeyondtrustWorkloadCredentials provider configuration including authentication,
+server connection details, and the folder path to the dynamic secret definition.
+The folderPath should point to a dynamic secret definition that has been created in
+BeyondTrust Workload Credentials (e.g., &ldquo;production/aws-temp&rdquo;).
+For setup details, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api">https://docs.beyondtrust.com/bt-docs/docs/secrets-api</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>retrySettings</code></br>
+<em>
+<a href="#external-secrets.io/v1.SecretStoreRetrySettings">
+SecretStoreRetrySettings
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RetrySettings configures exponential backoff for failed API requests.
+If not specified, uses the default retry settings.</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="generators.external-secrets.io/v1alpha1.BeyondtrustWorkloadCredentialsDynamicSecretSpec">BeyondtrustWorkloadCredentialsDynamicSecretSpec
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#generators.external-secrets.io/v1alpha1.BeyondtrustWorkloadCredentialsDynamicSecret">BeyondtrustWorkloadCredentialsDynamicSecret</a>, 
+<a href="#generators.external-secrets.io/v1alpha1.GeneratorSpec">GeneratorSpec</a>)
+</p>
+<p>
+<p>BeyondtrustWorkloadCredentialsDynamicSecretSpec defines the desired spec for BeyondtrustWorkloadCredentials dynamic generator.
+This generator enables obtaining temporary, short-lived credentials from BeyondTrust Workload Credentials.
+For more information, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api">https://docs.beyondtrust.com/bt-docs/docs/secrets-api</a></p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>controller</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Controller selects the controller that should handle this generator.
+Leave empty to use the default controller.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>provider</code></br>
+<em>
+<a href="#external-secrets.io/v1.BeyondtrustWorkloadCredentialsProvider">
+BeyondtrustWorkloadCredentialsProvider
+</a>
+</em>
+</td>
+<td>
+<p>Provider contains the BeyondtrustWorkloadCredentials provider configuration including authentication,
+server connection details, and the folder path to the dynamic secret definition.
+The folderPath should point to a dynamic secret definition that has been created in
+BeyondTrust Workload Credentials (e.g., &ldquo;production/aws-temp&rdquo;).
+For setup details, see: <a href="https://docs.beyondtrust.com/bt-docs/docs/secrets-api">https://docs.beyondtrust.com/bt-docs/docs/secrets-api</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<code>retrySettings</code></br>
+<em>
+<a href="#external-secrets.io/v1.SecretStoreRetrySettings">
+SecretStoreRetrySettings
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RetrySettings configures exponential backoff for failed API requests.
+If not specified, uses the default retry settings.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="generators.external-secrets.io/v1alpha1.CloudsmithAccessToken">CloudsmithAccessToken
 </h3>
 <p>
@@ -26195,6 +27400,9 @@ string
 <tbody><tr><td><p>&#34;ACRAccessToken&#34;</p></td>
 <td><p>GeneratorKindACRAccessToken represents an Azure Container Registry access token generator.</p>
 </td>
+</tr><tr><td><p>&#34;BeyondtrustWorkloadCredentialsDynamicSecret&#34;</p></td>
+<td><p>GeneratorKindBeyondtrustWorkloadCredentialsDynamicSecret represents a BeyondTrust Workload Credentials dynamic secret generator.</p>
+</td>
 </tr><tr><td><p>&#34;CloudsmithAccessToken&#34;</p></td>
 <td><p>GeneratorKindCloudsmithAccessToken represents a Cloudsmith access token generator.</p>
 </td>
@@ -26267,6 +27475,18 @@ string
 <em>
 <a href="#generators.external-secrets.io/v1alpha1.ACRAccessTokenSpec">
 ACRAccessTokenSpec
+</a>
+</em>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<code>beyondtrustWorkloadCredentialsDynamicSecretSpec</code></br>
+<em>
+<a href="#generators.external-secrets.io/v1alpha1.BeyondtrustWorkloadCredentialsDynamicSecretSpec">
+BeyondtrustWorkloadCredentialsDynamicSecretSpec
 </a>
 </em>
 </td>
@@ -28530,6 +29750,20 @@ k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1.JSON
 </tr>
 <tr>
 <td>
+<code>getParameters</code></br>
+<em>
+map[string][]string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>GetParameters are query-string parameters passed to Vault on GET calls.
+Each key may map to multiple values, matching HTTP query-string semantics.
+Ignored for non-GET methods; use Parameters for write bodies.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>resultType</code></br>
 <em>
 <a href="#generators.external-secrets.io/v1alpha1.VaultDynamicSecretResultType">
@@ -28679,6 +29913,20 @@ k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1.JSON
 </td>
 <td>
 <p>Parameters to pass to Vault write (for non-GET methods)</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>getParameters</code></br>
+<em>
+map[string][]string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>GetParameters are query-string parameters passed to Vault on GET calls.
+Each key may map to multiple values, matching HTTP query-string semantics.
+Ignored for non-GET methods; use Parameters for write bodies.</p>
 </td>
 </tr>
 <tr>
