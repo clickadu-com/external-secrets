@@ -1,5 +1,5 @@
 # Build stage
-ARG GolangVersion=1.26.2-202604141903
+ARG GolangVersion=1.26.5-202607081813
 FROM nexus.adsrv.wtf/base/golang:${GolangVersion} AS builder
 
 ARG TARGETOS=linux
